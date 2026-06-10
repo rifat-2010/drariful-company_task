@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "tailwindcss";
+@plugin "daisyui";
+
+
+.primary-text{
+    color: #001A33;
+}
+.secondary-text{
+    color: #003878;
+}
+.heading{
+    color: #003878; 
+}
+.sub-title{
+    color: #e88d67;
+}
+
+/* button active  */
+.active-btn{
+    background: linear-gradient(to right, #2872C6, #003878);
+    color: white;
+    font-weight:500;
+    padding: 6px 35px;
+    border-radius: 18px;
+}
+.active-btn:hover{
+    background: #003878;
+}
+
+/* gradient-button  */
+.gradient-button {
+    padding: 2px; 
+    border-radius: 16px; 
+    background: linear-gradient(to right, #2872C6, #003878);
+  }
+
+  .gradient-button span {
+    padding: 6px 35px;
+    background-color: white;
+    border-radius: 16px;
+    color: #003878;
+    font-weight: 600;
+  }
+
+  .gradient-button:hover span {
+    background: linear-gradient(to right, #2872C6, #003878); 
+    color: white;
+  }
+
+  /* learn more button */
+.learn-more-btn{
+    background: linear-gradient(to right, #2872C6, #003878);
+    color: white;
+    padding: 8px 12px 8px 12px;
+    border-radius: 10px;
+}
+
+.learn-more-btn:hover{
+    background: #003878;
+}
+
+ .responsive-text {
+    font-size: 12px; /* default for phone */
+  }
+
+  @media (min-width: 1024px) { /* from large screen (PC) */
+    .responsive-text {
+      font-size: 15px;
+    }
+  }
+
+

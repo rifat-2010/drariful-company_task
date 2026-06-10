@@ -1,0 +1,13 @@
+.nav-link li:hover {
+    color: #e88d67;
+    font-weight: 700;
+}
+
+.btn-active {
+    color: #e88d67;
+    font-weight: 700;
+    border-bottom: 2px solid #e88d67;
+}
+.nav-shadow{
+    box-shadow: inset 640px 100px 60px rgba(0,0,0,0.5);
+}
