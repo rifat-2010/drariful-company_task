@@ -66,8 +66,8 @@ export default function Blogs() {
       <section className="py-12 bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-10">
-            <h2 className="text-4xl font-bold mb-3 text-center heading">Medical & Insights Blogs</h2>
-            <p className="primary-text max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold mb-3 text-center text-[#003878]">Medical & Insights Blogs</h2>
+            <p className="text-[#001A33] max-w-2xl mx-auto">
               Read the latest articles, analysis, and news regarding Gynaepathology, Nephropathology, and Molecular Diagnostics in Bangladesh.
             </p>
           </div>
@@ -149,8 +149,8 @@ export default function Blogs() {
                       </span>
                     </div>
 
-                    <h3 className="text-xl font-bold mb-3 heading line-clamp-2 hover:text-blue-700 transition-colors">
-                      <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                    <h3 className="text-xl font-bold mb-3 line-clamp-2">
+                      <Link to={`/blogs/${blog.id}`} className="text-[#003878] hover:text-blue-700 transition-colors">{blog.title}</Link>
                     </h3>
 
                     <p className="primary-text text-sm mb-6 line-clamp-3 flex-1">

@@ -85,7 +85,7 @@ export default function BlogDetail() {
                   {blog.category}
                 </span>
               )}
-              <h1 className="text-3xl md:text-5xl font-extrabold heading mb-4 leading-tight">
+              <h1 className="text-3xl md:text-5xl font-extrabold text-[#003878] mb-4 leading-tight">
                 {blog.title}
               </h1>
               

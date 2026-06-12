@@ -25,7 +25,8 @@ import {
   getGallery,
   addGalleryItem,
   updateGalleryItem,
-  deleteGalleryItem
+  deleteGalleryItem,
+  uploadImageFile
 } from '../lib/cms';
 import { isFirebaseConfigured } from '../lib/firebase';
 
@@ -47,6 +48,38 @@ export default function Dashboard() {
   // Form States - Gallery
   const [galleryForm, setGalleryForm] = useState({ src: '', alt: '' });
   const [gallerySubmitLoading, setGallerySubmitLoading] = useState(false);
+
+  // Upload States
+  const [blogImageLoading, setBlogImageLoading] = useState(false);
+  const [galleryImageLoading, setGalleryImageLoading] = useState(false);
+
+  // Image Upload Handler
+  const handleImageUpload = async (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (type === 'blog') {
+      setBlogImageLoading(true);
+      try {
+        const url = await uploadImageFile(file);
+        setBlogForm(prev => ({ ...prev, coverImage: url }));
+      } catch (err) {
+        alert("Upload failed: " + err.message);
+      } finally {
+        setBlogImageLoading(false);
+      }
+    } else {
+      setGalleryImageLoading(true);
+      try {
+        const url = await uploadImageFile(file);
+        setGalleryForm(prev => ({ ...prev, src: url }));
+      } catch (err) {
+        alert("Upload failed: " + err.message);
+      } finally {
+        setGalleryImageLoading(false);
+      }
+    }
+  };
 
   // Auth Protection
   useEffect(() => {
@@ -129,6 +162,7 @@ export default function Dashboard() {
       content: blog.content || ''
     });
     setIsBlogFormOpen(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Actions - Blog Delete
@@ -179,6 +213,7 @@ export default function Dashboard() {
       src: item.src,
       alt: item.alt
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Actions - Gallery Delete
@@ -374,18 +409,40 @@ export default function Dashboard() {
                             </div>
 
                             <div>
-                              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Cover Image URL</label>
-                              <div className="relative">
-                                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 text-sm">
-                                  <FaLink />
-                                </span>
-                                <input
-                                  type="url"
-                                  value={blogForm.coverImage}
-                                  onChange={(e) => setBlogForm({ ...blogForm, coverImage: e.target.value })}
-                                  placeholder="https://example.com/image.jpg"
-                                  className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                                />
+                              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Cover Image</label>
+                              <div className="flex flex-col md:flex-row gap-4 items-start">
+                                <div className="flex-1 w-full">
+                                  <input
+                                    key={blogForm.id || 'new'}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleImageUpload(e, 'blog')}
+                                    className="block w-full text-sm text-gray-500 bg-white border border-gray-300 rounded-lg p-1.5 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#003878] hover:file:bg-blue-100 cursor-pointer"
+                                  />
+                                  {blogImageLoading && (
+                                    <div className="text-xs text-blue-600 mt-1 flex items-center gap-1 font-semibold">
+                                      <span className="loading loading-spinner loading-xs"></span> Processing/Uploading image...
+                                    </div>
+                                  )}
+                                  <div className="text-xs text-gray-400 mt-2">Or paste a cover image URL:</div>
+                                  <div className="relative mt-1">
+                                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 text-sm">
+                                      <FaLink />
+                                    </span>
+                                    <input
+                                      type="text"
+                                      value={blogForm.coverImage}
+                                      onChange={(e) => setBlogForm({ ...blogForm, coverImage: e.target.value })}
+                                      placeholder="https://example.com/image.jpg"
+                                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                    />
+                                  </div>
+                                </div>
+                                {blogForm.coverImage && (
+                                  <div className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex-shrink-0 shadow-sm">
+                                    <img src={blogForm.coverImage} alt="Preview" className="w-full h-full object-cover" />
+                                  </div>
+                                )}
                               </div>
                             </div>
 
@@ -488,21 +545,43 @@ export default function Dashboard() {
                           {galleryForm.id ? <FaEdit className="text-[#003878]" /> : <FaPlus className="text-[#003878]" />} 
                           {galleryForm.id ? 'Edit Photo in Clinical Gallery' : 'Add Photo to Clinical Gallery'}
                         </h2>
-                        <form onSubmit={handleGallerySubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                          <div className="md:col-span-1">
-                            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Image URL</label>
-                            <div className="relative">
-                              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                <FaLink />
-                              </span>
-                              <input
-                                type="url"
-                                required
-                                value={galleryForm.src}
-                                onChange={(e) => setGalleryForm({ ...galleryForm, src: e.target.value })}
-                                placeholder="https://i.ibb.co/..."
-                                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                              />
+                        <form onSubmit={handleGallerySubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                          <div className="md:col-span-2">
+                            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Image Source</label>
+                            <div className="flex flex-col sm:flex-row gap-3">
+                              <div className="flex-1 w-full">
+                                <input
+                                  key={galleryForm.id || 'new'}
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handleImageUpload(e, 'gallery')}
+                                  className="block w-full text-sm text-gray-500 bg-white border border-gray-300 rounded-lg p-1.5 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#003878] hover:file:bg-blue-100 cursor-pointer"
+                                />
+                                {galleryImageLoading && (
+                                  <div className="text-xs text-blue-600 mt-1 flex items-center gap-1 font-semibold">
+                                    <span className="loading loading-spinner loading-xs"></span> Processing...
+                                  </div>
+                                )}
+                                <div className="text-xs text-gray-400 mt-2">Or paste image URL:</div>
+                                <div className="relative mt-1">
+                                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <FaLink />
+                                  </span>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={galleryForm.src}
+                                    onChange={(e) => setGalleryForm({ ...galleryForm, src: e.target.value })}
+                                    placeholder="https://i.ibb.co/..."
+                                    className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                  />
+                                </div>
+                              </div>
+                              {galleryForm.src && (
+                                <div className="w-20 h-20 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex-shrink-0 self-center shadow-sm">
+                                  <img src={galleryForm.src} alt="Preview" className="w-full h-full object-cover" />
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div className="md:col-span-1">
@@ -513,7 +592,7 @@ export default function Dashboard() {
                               value={galleryForm.alt}
                               onChange={(e) => setGalleryForm({ ...galleryForm, alt: e.target.value })}
                               placeholder="e.g. Agreement Signing Ceremony"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white mb-2"
                             />
                           </div>
                           <div className="flex gap-2">

@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { X } from 'lucide-react';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import { Link, useLocation } from 'react-router-dom';
+import { getGallery } from '../lib/cms';
 
-const images = [
+const defaultImages = [
     {
         src: 'https://i.ibb.co.com/vxkL5zL1/associate-professor2.jpg',
         alt: 'Delivering speech in the world cancer day',
@@ -62,8 +63,26 @@ const images = [
 export default function Gallery() {
 
     const scrollRef = useRef(null);
+    const [images, setImages] = useState(defaultImages);
     const [modalImage, setModalImage] = useState(null);
+    const [loading, setLoading] = useState(true);
     const location = useLocation();
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            try {
+                const data = await getGallery();
+                if (data && data.length > 0) {
+                    setImages(data);
+                }
+            } catch (error) {
+                console.error("Failed to load gallery images on Home Page:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchImages();
+    }, []);
 
     // Function to scroll to the top smoothly
     const scrollToTop = () => {

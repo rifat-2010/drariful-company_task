@@ -1,4 +1,5 @@
-import { isFirebaseConfigured, auth, db } from "./firebase";
+import { isFirebaseConfigured, auth, db, storage } from "./firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   signInWithEmailAndPassword,
   signOut,
@@ -178,6 +179,23 @@ export const getBlogs = async () => {
       querySnapshot.forEach((docSnap) => {
         blogsList.push({ id: docSnap.id, ...docSnap.data() });
       });
+      
+      // If Firestore is empty, seed it with default blogs
+      if (blogsList.length === 0) {
+        console.log("Firestore blogs collection is empty. Seeding with default blogs...");
+        for (const blog of defaultBlogs) {
+          const { id, ...blogWithoutId } = blog;
+          await addDoc(collection(db, "blogs"), blogWithoutId);
+        }
+        // Re-fetch
+        const freshSnapshot = await getDocs(q);
+        const seededList = [];
+        freshSnapshot.forEach((docSnap) => {
+          seededList.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        return seededList;
+      }
+      
       return blogsList;
     } catch (err) {
       console.error("Firestore getBlogs failed, falling back to LocalStorage:", err);
@@ -267,9 +285,24 @@ export const getGallery = async () => {
       querySnapshot.forEach((docSnap) => {
         galleryList.push({ id: docSnap.id, ...docSnap.data() });
       });
-      if (galleryList.length > 0) {
-        return galleryList;
+      
+      // If Firestore is empty, seed it with default gallery items
+      if (galleryList.length === 0) {
+        console.log("Firestore gallery collection is empty. Seeding with default gallery items...");
+        for (const item of defaultGallery) {
+          const { id, ...itemWithoutId } = item;
+          await addDoc(collection(db, "gallery"), itemWithoutId);
+        }
+        // Re-fetch
+        const freshSnapshot = await getDocs(collection(db, "gallery"));
+        const seededList = [];
+        freshSnapshot.forEach((docSnap) => {
+          seededList.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        return seededList;
       }
+      
+      return galleryList;
     } catch (err) {
       console.error("Firestore getGallery failed, falling back to LocalStorage:", err);
     }
@@ -342,4 +375,65 @@ export const deleteGalleryItem = async (id) => {
   const filtered = gallery.filter((img) => img.id.toString() !== id.toString());
   localStorage.setItem("gallery", JSON.stringify(filtered));
   return true;
+};
+
+/**
+ * IMAGE COMPRESSION & UPLOAD UTILITIES
+ */
+export const compressAndConvertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 600;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Compress to JPEG at 70% quality
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
+export const uploadImageFile = async (file) => {
+  if (isFirebaseConfigured && storage) {
+    try {
+      const storageRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(snapshot.ref);
+      return url;
+    } catch (err) {
+      console.error("Firebase Storage upload failed, falling back to Base64:", err);
+      return await compressAndConvertToBase64(file);
+    }
+  }
+  
+  // Local/Fallback mode: compress and return Base64 Data URL
+  return await compressAndConvertToBase64(file);
 };

@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -21,12 +22,14 @@ const isFirebaseConfigured = !!(
 let app;
 let auth;
 let db;
+let storage;
 
 if (isFirebaseConfigured) {
   try {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     auth = getAuth(app);
     db = getFirestore(app);
+    storage = getStorage(app);
     console.log("Firebase client initialized successfully.");
   } catch (error) {
     console.error("Firebase initialization failed:", error);
@@ -35,4 +38,4 @@ if (isFirebaseConfigured) {
   console.log("Firebase env keys missing. Running in LocalStorage Mock CMS mode.");
 }
 
-export { auth, db, isFirebaseConfigured };
+export { auth, db, storage, isFirebaseConfigured };

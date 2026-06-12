@@ -1,8 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "tailwindcss";
-@plugin "daisyui";
 
 
 .primary-text{
@@ -11,7 +9,7 @@
 .secondary-text{
     color: #003878;
 }
-.heading{
+.heading, .heading a {
     color: #003878; 
 }
 .sub-title{
