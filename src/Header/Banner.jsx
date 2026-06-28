@@ -87,7 +87,7 @@ export default function Banner() {
                     <IoMdCheckmarkCircleOutline />
                   </span>
                   <li>
-                    Signed out over 51,000 cases in surgical pathology,
+                    Signed out over 60,000 cases in surgical pathology,
                     cytopathology, and IHC
                   </li>
                 </div>
@@ -133,8 +133,8 @@ export default function Banner() {
                     <IoMdCheckmarkCircleOutline />
                   </span>
                   <li>
-                    Leading ISO 15189 accreditation process for TMSS
-                    Biomolecular Lab
+                    Achieved ISO 15189:2022 Accreditation for TMSS
+                    Biomolecular Lab (March 2026)
                   </li>
                 </div>
                 <div className="flex gap-2 items-center">

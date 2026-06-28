@@ -10,7 +10,8 @@ import {
   FaChartBar,
   FaDatabase,
   FaTimes,
-  FaLink
+  FaLink,
+  FaFlask
 } from 'react-icons/fa';
 import Nav from '../Header/Nav';
 import Footer from '../Footer/Footer';
@@ -26,7 +27,11 @@ import {
   addGalleryItem,
   updateGalleryItem,
   deleteGalleryItem,
-  uploadImageFile
+  uploadImageFile,
+  getProjects,
+  addProject,
+  updateProject,
+  deleteProject
 } from '../lib/cms';
 import { isFirebaseConfigured } from '../lib/firebase';
 
@@ -38,6 +43,7 @@ export default function Dashboard() {
   // Data States
   const [blogs, setBlogs] = useState([]);
   const [gallery, setGallery] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Form States - Blogs
@@ -49,9 +55,15 @@ export default function Dashboard() {
   const [galleryForm, setGalleryForm] = useState({ src: '', alt: '' });
   const [gallerySubmitLoading, setGallerySubmitLoading] = useState(false);
 
+  // Form States - Research Projects
+  const [projectForm, setProjectForm] = useState({ id: '', title: '', summary: '', description: '', status: 'Ongoing', year: '', field: 'Cancer', collaborators: '', imageUrl: '', featured: false });
+  const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
+  const [projectSubmitLoading, setProjectSubmitLoading] = useState(false);
+
   // Upload States
   const [blogImageLoading, setBlogImageLoading] = useState(false);
   const [galleryImageLoading, setGalleryImageLoading] = useState(false);
+  const [projectImageLoading, setProjectImageLoading] = useState(false);
 
   // Image Upload Handler
   const handleImageUpload = async (e, type) => {
@@ -67,6 +79,16 @@ export default function Dashboard() {
         alert("Upload failed: " + err.message);
       } finally {
         setBlogImageLoading(false);
+      }
+    } else if (type === 'project') {
+      setProjectImageLoading(true);
+      try {
+        const url = await uploadImageFile(file);
+        setProjectForm(prev => ({ ...prev, imageUrl: url }));
+      } catch (err) {
+        alert("Upload failed: " + err.message);
+      } finally {
+        setProjectImageLoading(false);
       }
     } else {
       setGalleryImageLoading(true);
@@ -99,8 +121,10 @@ export default function Dashboard() {
     try {
       const blogsData = await getBlogs();
       const galleryData = await getGallery();
+      const projectsData = await getProjects();
       setBlogs(blogsData);
       setGallery(galleryData);
+      setProjects(projectsData);
     } catch (err) {
       console.error("Error loading dashboard data:", err);
     } finally {
@@ -228,6 +252,76 @@ export default function Dashboard() {
     }
   };
 
+  // Actions - Project Save
+  const handleProjectSubmit = async (e) => {
+    e.preventDefault();
+    setProjectSubmitLoading(true);
+    try {
+      if (projectForm.id) {
+        await updateProject(projectForm.id, {
+          title: projectForm.title,
+          summary: projectForm.summary,
+          description: projectForm.description,
+          status: projectForm.status,
+          year: projectForm.year,
+          field: projectForm.field,
+          collaborators: projectForm.collaborators,
+          imageUrl: projectForm.imageUrl,
+          featured: projectForm.featured
+        });
+      } else {
+        await addProject({
+          title: projectForm.title,
+          summary: projectForm.summary,
+          description: projectForm.description,
+          status: projectForm.status,
+          year: projectForm.year,
+          field: projectForm.field,
+          collaborators: projectForm.collaborators,
+          imageUrl: projectForm.imageUrl,
+          featured: projectForm.featured
+        });
+      }
+      setProjectForm({ id: '', title: '', summary: '', description: '', status: 'Ongoing', year: '', field: 'Cancer', collaborators: '', imageUrl: '', featured: false });
+      setIsProjectFormOpen(false);
+      await loadData();
+    } catch (err) {
+      alert("Error saving research project: " + err.message);
+    } finally {
+      setProjectSubmitLoading(false);
+    }
+  };
+
+  // Actions - Project Edit Trigger
+  const handleEditProject = (project) => {
+    setProjectForm({
+      id: project.id,
+      title: project.title,
+      summary: project.summary,
+      description: project.description,
+      status: project.status,
+      year: project.year,
+      field: project.field,
+      collaborators: Array.isArray(project.collaborators) ? project.collaborators.join(', ') : project.collaborators || '',
+      imageUrl: project.imageUrl || '',
+      featured: !!project.featured
+    });
+    setIsProjectFormOpen(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Actions - Project Delete
+  const handleDeleteProject = async (id) => {
+    if (window.confirm("Are you sure you want to delete this research project?")) {
+      try {
+        await deleteProject(id);
+        await loadData();
+      } catch (err) {
+        alert("Error deleting research project: " + err.message);
+      }
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -293,6 +387,16 @@ export default function Dashboard() {
                 >
                   <FaImage /> Manage Gallery
                 </button>
+                <button
+                  onClick={() => setActiveTab('projects')}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                    activeTab === 'projects'
+                      ? 'bg-blue-50 text-[#003878]'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <FaFlask /> Manage Research
+                </button>
               </nav>
             </div>
 
@@ -308,7 +412,7 @@ export default function Dashboard() {
                   {/* OVERVIEW TAB */}
                   {activeTab === 'overview' && (
                     <div className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 flex items-center gap-5">
                           <div className="p-4 bg-blue-50 text-[#003878] rounded-xl">
                             <FaFileAlt className="text-3xl" />
@@ -326,6 +430,16 @@ export default function Dashboard() {
                           <div>
                             <p className="text-sm text-gray-500 font-semibold uppercase tracking-wider">Gallery Images</p>
                             <h3 className="text-3xl font-extrabold text-gray-900 mt-1">{gallery.length}</h3>
+                          </div>
+                        </div>
+
+                        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 flex items-center gap-5">
+                          <div className="p-4 bg-orange-50 text-[#e88d67] rounded-xl">
+                            <FaFlask className="text-3xl" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500 font-semibold uppercase tracking-wider">Research Projects</p>
+                            <h3 className="text-3xl font-extrabold text-gray-900 mt-1">{projects.length}</h3>
                           </div>
                         </div>
                       </div>
@@ -654,6 +768,274 @@ export default function Dashboard() {
                         ) : (
                           <div className="text-center py-12 text-gray-500">
                             No gallery images found. Add some images above to populate the clinical gallery.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* RESEARCH PROJECTS MANAGEMENT TAB */}
+                  {activeTab === 'projects' && (
+                    <div className="space-y-6">
+                      {/* Project Form / Edit (Inline Form) */}
+                      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+                          <h2 className="text-xl font-bold text-gray-900">
+                            {projectForm.id ? 'Edit Research Project' : 'Add New Research Project'}
+                          </h2>
+                          {!isProjectFormOpen && (
+                            <button
+                              onClick={() => {
+                                setProjectForm({ id: '', title: '', summary: '', description: '', status: 'Ongoing', year: '', field: 'Cancer', collaborators: '', imageUrl: '', featured: false });
+                                setIsProjectFormOpen(true);
+                              }}
+                              className="flex items-center gap-2 px-4 py-2 bg-[#003878] hover:bg-blue-800 text-white rounded-lg text-sm font-bold transition-colors shadow-sm"
+                            >
+                              <FaPlus /> Add New Project
+                            </button>
+                          )}
+                        </div>
+
+                        {isProjectFormOpen && (
+                          <div className="p-6 bg-blue-50/50 border-b border-gray-200">
+                            <form onSubmit={handleProjectSubmit} className="space-y-4">
+                              <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Project Title</label>
+                                <input
+                                  type="text"
+                                  required
+                                  value={projectForm.title}
+                                  onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
+                                  placeholder="e.g. Somatic Mutation Landscape of Solid Tumors..."
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Research Field (Category)</label>
+                                  <select
+                                    value={projectForm.field}
+                                    onChange={(e) => setProjectForm({ ...projectForm, field: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white select cursor-pointer"
+                                  >
+                                    <option value="Cancer">Cancer</option>
+                                    <option value="Renal">Renal</option>
+                                    <option value="Cytology">Cytology</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Molecular Pathology">Molecular Pathology</option>
+                                    <option value="Other">Other</option>
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Research Status</label>
+                                  <select
+                                    value={projectForm.status}
+                                    onChange={(e) => setProjectForm({ ...projectForm, status: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white select cursor-pointer"
+                                  >
+                                    <option value="Ongoing">Ongoing</option>
+                                    <option value="Published">Published</option>
+                                    <option value="Submitted">Submitted</option>
+                                    <option value="Completed">Completed</option>
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Duration / Year</label>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={projectForm.year}
+                                    onChange={(e) => setProjectForm({ ...projectForm, year: e.target.value })}
+                                    placeholder="e.g. 2024-present or 2026"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                  />
+                                </div>
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Summary (Short description)</label>
+                                <textarea
+                                  required
+                                  rows={2}
+                                  value={projectForm.summary}
+                                  onChange={(e) => setProjectForm({ ...projectForm, summary: e.target.value })}
+                                  placeholder="Brief 1-2 sentence overview of the study..."
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Full Description</label>
+                                <textarea
+                                  required
+                                  rows={4}
+                                  value={projectForm.description}
+                                  onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
+                                  placeholder="Full details of the study methodology, objectives, and findings..."
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Collaborating Institutions (Comma-separated)</label>
+                                <input
+                                  type="text"
+                                  value={projectForm.collaborators}
+                                  onChange={(e) => setProjectForm({ ...projectForm, collaborators: e.target.value })}
+                                  placeholder="e.g. TMSS Biomolecular Lab, Xing Holdings, Australia"
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Project Cover Image</label>
+                                <div className="flex flex-col sm:flex-row gap-4 items-start">
+                                  <div className="flex-1 w-full">
+                                    <input
+                                      key={projectForm.id || 'new'}
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={(e) => handleImageUpload(e, 'project')}
+                                      className="block w-full text-sm text-gray-500 bg-white border border-gray-300 rounded-lg p-1.5 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#003878] hover:file:bg-blue-100 cursor-pointer"
+                                    />
+                                    {projectImageLoading && (
+                                      <div className="text-xs text-blue-600 mt-1 flex items-center gap-1 font-semibold">
+                                        <span className="loading loading-spinner loading-xs"></span> Processing image...
+                                      </div>
+                                    )}
+                                    <div className="text-xs text-gray-400 mt-2">Or paste cover image URL:</div>
+                                    <div className="relative mt-1">
+                                      <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                        <FaLink />
+                                      </span>
+                                      <input
+                                        type="text"
+                                        value={projectForm.imageUrl}
+                                        onChange={(e) => setProjectForm({ ...projectForm, imageUrl: e.target.value })}
+                                        placeholder="https://example.com/project-image.jpg"
+                                        className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                      />
+                                    </div>
+                                  </div>
+                                  {projectForm.imageUrl && (
+                                    <div className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex-shrink-0 shadow-sm">
+                                      <img src={projectForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 py-2">
+                                <input
+                                  type="checkbox"
+                                  id="featured"
+                                  checked={projectForm.featured}
+                                  onChange={(e) => setProjectForm({ ...projectForm, featured: e.target.checked })}
+                                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                                />
+                                <label htmlFor="featured" className="text-sm font-bold text-gray-700 select-none cursor-pointer">
+                                  Feature on Homepage (Will display in Featured Research Projects section)
+                                </label>
+                              </div>
+
+                              <div className="flex items-center gap-3 pt-2">
+                                <button
+                                  type="submit"
+                                  disabled={projectSubmitLoading}
+                                  className="px-6 py-2 bg-[#003878] hover:bg-blue-800 text-white rounded-lg text-sm font-bold transition-colors shadow-sm disabled:bg-gray-400 flex items-center gap-2"
+                                >
+                                  {projectSubmitLoading && <span className="loading loading-spinner loading-xs"></span>}
+                                  {projectForm.id ? 'Update Project' : 'Save Project'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setIsProjectFormOpen(false);
+                                    setProjectForm({ id: '', title: '', summary: '', description: '', status: 'Ongoing', year: '', field: 'Cancer', collaborators: '', imageUrl: '', featured: false });
+                                  }}
+                                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-bold transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Projects Table Display */}
+                      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="p-6 border-b border-gray-200">
+                          <h2 className="text-lg font-bold text-gray-900">Current Research Projects ({projects.length})</h2>
+                        </div>
+                        {projects.length > 0 ? (
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                              <thead>
+                                <tr className="bg-gray-50 border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                  <th className="px-6 py-3">Project Title</th>
+                                  <th className="px-6 py-3">Field</th>
+                                  <th className="px-6 py-3">Status</th>
+                                  <th className="px-6 py-3">Duration</th>
+                                  <th className="px-6 py-3">Featured</th>
+                                  <th className="px-6 py-3 text-right">Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-gray-150 text-sm">
+                                {projects.map((proj) => (
+                                  <tr key={proj.id} className="hover:bg-gray-50/50">
+                                    <td className="px-6 py-4 font-semibold text-gray-900 max-w-xs truncate">
+                                      {proj.title}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                                        {proj.field}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                      <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
+                                        proj.status === 'Published' || proj.status === 'Completed'
+                                          ? 'bg-green-50 text-green-700 border border-green-100'
+                                          : proj.status === 'Submitted'
+                                            ? 'bg-purple-50 text-purple-700 border border-purple-100'
+                                            : 'bg-orange-50 text-orange-700 border border-orange-100'
+                                      }`}>
+                                        {proj.status}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-500 font-medium">{proj.year}</td>
+                                    <td className="px-6 py-4">
+                                      {proj.featured ? (
+                                        <span className="text-amber-500 font-bold text-xs bg-amber-50 px-2 py-0.5 rounded border border-amber-200 uppercase tracking-wider">Yes</span>
+                                      ) : (
+                                        <span className="text-gray-400 text-xs">No</span>
+                                      )}
+                                    </td>
+                                    <td className="px-6 py-4 text-right space-x-3">
+                                      <button
+                                        onClick={() => handleEditProject(proj)}
+                                        className="text-[#003878] hover:text-blue-900 font-bold inline-flex items-center gap-1.5"
+                                      >
+                                        <FaEdit /> Edit
+                                      </button>
+                                      <button
+                                        onClick={() => handleDeleteProject(proj.id)}
+                                        className="text-red-600 hover:text-red-900 font-bold inline-flex items-center gap-1.5"
+                                      >
+                                        <FaTrashAlt /> Delete
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <div className="text-center py-12 text-gray-500">
+                            No projects found. Create a project above to get started.
                           </div>
                         )}
                       </div>

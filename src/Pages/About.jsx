@@ -141,7 +141,7 @@ const About = () => {
               2017 and Associate Professor in 2023. At the 1000-bed TMSS
               hospital, he led the creation of a full-fledged Histopathology &
               IHC Laboratory and has signed out over{" "}
-              <span className="font-semibold">51,000 cases</span> in surgical
+              <span className="font-semibold">60,000 cases</span> in surgical
               pathology, cytopathology, and immunohistochemistry. He is also
               skilled in advanced diagnostic techniques including image-guided
               FNAC, frozen section, and core biopsy.
@@ -154,17 +154,14 @@ const About = () => {
               As the Laboratory Director of the TMSS Biomolecular Lab, Dr.
               Rahman founded Bangladesh's first NGS-based cancer diagnostics
               center. Trained by international experts from Xing Holdings,
-              Australia, he is leading the lab's journey towards{" "}
-              <span className="font-semibold">ISO 15189 accreditation</span>,
-              aiming to bring world-class precision diagnostics to underserved
-              communities.
+              Australia, he successfully achieved <span className="font-semibold">ISO 15189:2022 accreditation</span> for TMSS Biomolecular Lab in March 2026. Accredited by EIAC under the ILAC framework, it is the first and only accredited NGS laboratory for molecular cancer diagnostics in South Asia, bringing world-class precision diagnostics to underserved communities.
             </p>
 
             <h3 class="heading text-lg font-semibold mb-2">
               Academic & Research Contributions
             </h3>
             <p class="mb-6">
-              With <span className="font-semibold">32 published papers</span>,
+              With <span className="font-semibold">44 peer-reviewed publications</span> (37 published and 7 submitted),
               Dr. Rahman is an enthusiastic researcher focusing on
               nephropathology, gynecologic and lymphoid pathology, head and neck
               cancers, and molecular diagnostics. His work aims to bridge
@@ -191,7 +188,7 @@ const About = () => {
             <p class="mb-6">
               Dr. Rahman has received several accolades, including the{" "}
               <span className="font-semibold">
-                Best Teacher Award (2023), TMSS Service Award (2022), and Mujib
+                Annual Performance Award (2025), Best Teacher Award (2023), TMSS Service Award (2022), and Mujib
                 Year Service Award (2021)
               </span>
               , honoring his excellence in diagnostics, teaching, and community

@@ -171,7 +171,7 @@ export default function Publications() {
             <div>
               <h2 className="text-3xl font-bold mb-2 text-center heading">Research & Publications</h2>
               <p className='primary-text text-center mb-8'>
-                I am an enthusiastic researcher with 32 publications so far focusing on Nephropathology, Gynaepathology, Lymphoreticular pathology, Head neck pathology and molecular pathology. My carrier focus is translational cancer research, precision cancer medicine and clinical trial.
+                I am an enthusiastic researcher with 44 publications so far (37 published and 7 submitted) focusing on Nephropathology, Gynaepathology, Lymphoreticular pathology, Head neck pathology and molecular pathology. My carrier focus is translational cancer research, precision cancer medicine and clinical trial.
               </p>
               
             </div>

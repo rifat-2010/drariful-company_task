@@ -1,377 +1,559 @@
 [
-    {
-      "id": "01",
-      "title": "Alport syndrome: A case report with clinical & pathological evaluation",
-      "journal": "Bangladesh journal of paediatric nephrology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2022",
-      "field": ["Renal"],
-      "abstract": "This case report discusses the clinical and pathological evaluation of Alport syndrome, a rare genetic disorder affecting kidney function.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "02",
-      "title": "Classification of Membranoproliferative Glomerulonephritis According to New Evolving Classification System by Using Immunofluorescence Technique",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2021",
-      "field": ["Renal"],
-      "abstract": "This study explores the classification of Membranoproliferative Glomerulonephritis using a new evolving classification system with immunofluorescence techniques.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "03",
-      "title": "Stromal Tumour of Uncertain Malignant Potential (STUMP) of the Prostate: A Case Report and literature review",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2021",
-      "field": ["Cancer"],
-      "abstract": "This case report and literature review discusses the Stromal Tumour of Uncertain Malignant Potential (STUMP) of the Prostate, a rare prostatic neoplasm.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "04",
-      "title": "Laboratory Diagnosis of cancer in 21st century: A brief review",
-      "journal": "TMSS medical college journal",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2020",
-      "field": ["Cancer", "Education"],
-      "abstract": "This review article discusses modern laboratory diagnostic methods for cancer in the 21st century.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "05",
-      "title": "C3 glomerulopathy: Overview on a new disease entity",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2020",
-      "field": ["Renal"],
-      "abstract": "This overview discusses C3 glomerulopathy, a new disease entity affecting kidney function through the complement pathway.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "06",
-      "title": "CT guided FNAC of chest: An institutional experience",
-      "journal": "TMSS medical college journal",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2019",
-      "field": ["Cytology"],
-      "abstract": "This study shares the institutional experience of CT-guided Fine Needle Aspiration Cytology (FNAC) of chest lesions.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "07",
-      "title": "Comparison between Bethesda System and Conventional System for Standardization of Reporting Thyroid Cytopathology",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2019",
-      "field": ["Cytology"],
-      "abstract": "This comparative study evaluates the Bethesda System versus Conventional System for standardizing thyroid cytopathology reporting.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "08",
-      "title": "Histopathological Diagnosis of Rhinofacial Entomophthoramycosis in a 16-Year-Old Girl: A Case Report",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2019",
-      "field": ["Education"],
-      "abstract": "This case report discusses the histopathological diagnosis of Rhinofacial Entomophthoramycosis in a teenage patient.",
-      "downloadAvailable": false
-    },
-    {
-      "id": "09",
-      "title": "Xeroderma pigmentosum: A case report and literature review",
-      "journal": "TMSS medical college journal",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2018",
-      "field": ["Education"],
-      "abstract": "This case report and literature review discusses Xeroderma pigmentosum, a rare genetic disorder affecting the skin's ability to repair DNA damage from UV light.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "10",
-      "title": "Frequency and antibiotic sensitivity pattern of uropathogens isolated from patients with urinary tract infection.",
-      "journal": "TMSS medical college journal",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2018",
-      "field": ["Education"],
-      "abstract": "This study investigates the frequency and antibiotic sensitivity patterns of uropathogens in urinary tract infections.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "11",
-      "title": "Assessment of Clinical Characteristics and FNAC Findings of Different Thyroid Lesions",
-      "journal": "TMSS medical college journal",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2018",
-      "field": ["Cytology"],
-      "abstract": "This assessment evaluates the clinical characteristics and Fine Needle Aspiration Cytology (FNAC) findings of various thyroid lesions.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "12",
-      "title": "Co-existent caecal adenocarcinoma and Tuberculosis: A rare case report",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2017",
-      "field": ["Cancer"],
-      "abstract": "This rare case report discusses the coexistence of caecal adenocarcinoma and tuberculosis in a single patient.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "13",
-      "title": "Immunofluorescence Findings of Membranoproliferative Glomerulonephritis: A Cross sectional Findings of 67 Cases in the light of new evolving classification system.",
-      "journal": "Bangladesh journal of paediatric nephrology",
-      "status": "Submitted",
-      "authorship": "Principal author",
-      "year": "2023",
-      "field": ["Renal"],
-      "abstract": "This cross-sectional study reports immunofluorescence findings in 67 cases of Membranoproliferative Glomerulonephritis using the new classification system.",
-      "downloadAvailable": false
-    },
-    {
-      "id": "14",
-      "title": "Assessment of clinical characteristics and FNAC findings of different thyroid lesions in a group of Bangladeshi patients",
-      "journal": "TMSS medical college journal",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2017",
-      "field": ["Cytology"],
-      "abstract": "This assessment evaluates the clinical characteristics and FNAC findings of thyroid lesions specifically in Bangladeshi patients.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "15",
-      "title": "DNA sequencing: From medicine to personalized medicine",
-      "journal": "TMSS medical college journal",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2017",
-      "field": ["Education"],
-      "abstract": "This article discusses the evolution of DNA sequencing technology and its impact on personalized medicine.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "16",
-      "title": "Liquid biopsy: In a nutshell",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2017",
-      "field": ["Cancer"],
-      "abstract": "This concise overview explains liquid biopsy technology and its applications in cancer diagnosis and monitoring.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "17",
-      "title": "A clinicopathologic study Membranoproliferative glomerulonephritis in the light of new evolving classification",
-      "journal": "Bangladesh journal of paediatric nephrology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "2016",
-      "field": ["Renal"],
-      "abstract": "This clinicopathologic study examines Membranoproliferative glomerulonephritis using the new evolving classification system.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "18",
-      "title": "Correlation of severe acute respiratory syndrome corona virus viral load with clinical characteristics, mortality and laboratory findings",
-      "journal": "TMSS medical college journal",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2021",
-      "field": ["COVID-19"],
-      "abstract": "This study investigates the correlation between SARS-CoV-2 viral load and clinical outcomes, mortality, and laboratory findings.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "19",
-      "title": "Haematological, biochemical and infection related biomarkers among survivors and non-survivor's patients infected by SARS COVOID 19 in Bogura.",
-      "journal": "TMSS medical college journal",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2021",
-      "field": ["COVID-19"],
-      "abstract": "This study compares various biomarkers between survivors and non-survivors of COVID-19 infection in Bogura.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "20",
-      "title": "Comparison of diagnostic efficacy between liquid based cytology and conventional pap smear",
-      "journal": "International Journal of Human and Health Sciences",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2016",
-      "field": ["Cytology"],
-      "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "21",
-      "title": "Comparison of visual inspection with acetic acid (VIA) with reflex HPV DNA test in cervical cancer screening.",
-      "journal": "Community based medical journal",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2016",
-      "field": ["Cytology"],
-      "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "22",
-      "title": "E cadherin expression in patients with gastric carcinoma in relation to histological prognostic parameters.",
-      "journal": "Journal of diabetic association medical college, Faridpur. ",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2016",
-      "field": ["Cytology"],
-      "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "23",
-      "title": "A case report on intrarenal lipoma.",
-      "journal": "TMSS Medical college Journal.",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2016",
-      "field": ["Cytology"],
-      "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "24",
-      "title": "Identification of Atypical Epithelial Proliferation in Fallopian Tube in Association with Ovarian Serous Carcinoma",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "2016",
-      "field": ["Cytology"],
-      "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
-      "downloadAvailable": true
-    },
-    {
-      "id": "25",
-      "title": "Immunofluorescence Findings of Membranoproliferative Glomerulonephritis: A Cross Sectional Findings of 67 Cases",
-      "journal": "Kidney foundation journal",
-      "status": "Submitted",
-      "authorship": "Principal author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    },
-    {
-      "id": "26",
-      "title": "A Case of Endometrial Tuberculosis Causing Primary Infertility",
-      "journal": "TMSS Medical college Journal",
-      "status": "Published",
-      "authorship": "Co author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    },
-    {
-      "id": "27",
-      "title": "Gliomatosis Peritonei Combined with Mature Cystic Teratoma: A Rare Case Report",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    },
-    {
-      "id": "28",
-      "title": "Why BRCA mutation testing is important?",
-      "journal": "TMSS Medical college Journal",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    },
-    {
-      "id": "29",
-      "title": "The association between papillary thyroid carcinoma and thyroid stimulating hormone (TSH)",
-      "journal": "Scholars journal of applied medical sciences",
-      "status": "Published",
-      "authorship": "Co-Author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    },
-    {
-      "id": "30",
-      "title": "Diagnostic efficacy of conventional cytological smears and cell block of ascetic fluid for detection of malignant cell",
-      "journal": "Gazi medical college journal",
-      "status": "Published",
-      "authorship": "Co-Author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    },
-    {
-      "id": "31",
-      "title": "Post-graduation medical education: A pipeline to competence",
-      "journal": "TMSS Medical college Journal",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    },
-    {
-      "id": "32",
-      "title": "Histopathological and clinical differences between right and left sided colorectal carcinoma in a group of patient",
-      "journal": "TMSS Medical college Journal",
-      "status": "Published",
-      "authorship": "Co-Author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    },
-    {
-      "id": "33",
-      "title": "Challenges and prospects of establishing genome sequencing laboratory in Bangladesh",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    },
-    {
-      "id": "34",
-      "title": "Primary Squamous Cell Carcinoma of Breast in a Lactating Mother: A Rare Case Report",
-      "journal": "Bangladesh journal of Histopathology & Cytopathology",
-      "status": "Published",
-      "authorship": "Principal author",
-      "year": "N/A",
-      "field": [],
-      "abstract": "",
-      "downloadAvailable": false
-    }
-  ]
-  
+  {
+    "id": "01",
+    "title": "Alport syndrome: A case report with clinical & pathological evaluation",
+    "journal": "Bangladesh journal of paediatric nephrology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2022",
+    "field": [
+      "Renal"
+    ],
+    "abstract": "This case report discusses the clinical and pathological evaluation of Alport syndrome, a rare genetic disorder affecting kidney function.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "02",
+    "title": "Classification of Membranoproliferative Glomerulonephritis According to New Evolving Classification System by Using Immunofluorescence Technique",
+    "journal": "Bangladesh journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2021",
+    "field": [
+      "Renal"
+    ],
+    "abstract": "This study explores the classification of Membranoproliferative Glomerulonephritis using a new evolving classification system with immunofluorescence techniques.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "03",
+    "title": "Stromal Tumour of Uncertain Malignant Potential (STUMP) of the Prostate: A Case Report and literature review",
+    "journal": "Bangladesh journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2021",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "This case report and literature review discusses the Stromal Tumour of Uncertain Malignant Potential (STUMP) of the Prostate, a rare prostatic neoplasm.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "04",
+    "title": "Laboratory Diagnosis of cancer in 21st century: A brief review",
+    "journal": "TMSS medical college journal",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2020",
+    "field": [
+      "Cancer",
+      "Education"
+    ],
+    "abstract": "This review article discusses modern laboratory diagnostic methods for cancer in the 21st century.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "05",
+    "title": "C3 glomerulopathy: Overview on a new disease entity",
+    "journal": "Bangladesh journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2020",
+    "field": [
+      "Renal"
+    ],
+    "abstract": "This overview discusses C3 glomerulopathy, a new disease entity affecting kidney function through the complement pathway.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "06",
+    "title": "CT guided FNAC of chest: An institutional experience",
+    "journal": "TMSS medical college journal",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2019",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "This study shares the institutional experience of CT-guided Fine Needle Aspiration Cytology (FNAC) of chest lesions.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "07",
+    "title": "Comparison between Bethesda System and Conventional System for Standardization of Reporting Thyroid Cytopathology",
+    "journal": "Bangladesh journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2019",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "This comparative study evaluates the Bethesda System versus Conventional System for standardizing thyroid cytopathology reporting.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "08",
+    "title": "Histopathological Diagnosis of Rhinofacial Entomophthoramycosis in a 16-Year-Old Girl: A Case Report",
+    "journal": "Bangladesh journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2019",
+    "field": [
+      "Education"
+    ],
+    "abstract": "This case report discusses the histopathological diagnosis of Rhinofacial Entomophthoramycosis in a teenage patient.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "09",
+    "title": "Xeroderma pigmentosum: A case report and literature review",
+    "journal": "TMSS medical college journal",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2018",
+    "field": [
+      "Education"
+    ],
+    "abstract": "This case report and literature review discusses Xeroderma pigmentosum, a rare genetic disorder affecting the skin's ability to repair DNA damage from UV light.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "10",
+    "title": "Frequency and antibiotic sensitivity pattern of uropathogens isolated from patients with urinary tract infection.",
+    "journal": "TMSS medical college journal",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2018",
+    "field": [
+      "Education"
+    ],
+    "abstract": "This study investigates the frequency and antibiotic sensitivity patterns of uropathogens in urinary tract infections.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "11",
+    "title": "Assessment of Clinical Characteristics and FNAC Findings of Different Thyroid Lesions",
+    "journal": "TMSS medical college journal",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2018",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "This assessment evaluates the clinical characteristics and Fine Needle Aspiration Cytology (FNAC) findings of various thyroid lesions.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "12",
+    "title": "Co-existent caecal adenocarcinoma and Tuberculosis: A rare case report",
+    "journal": "Bangladesh journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2017",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "This rare case report discusses the coexistence of caecal adenocarcinoma and tuberculosis in a single patient.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "13",
+    "title": "Immunofluorescence Findings of Membranoproliferative Glomerulonephritis: A Cross sectional Findings of 67 Cases in the light of new evolving classification system.",
+    "journal": "Bangladesh journal of paediatric nephrology",
+    "status": "Submitted",
+    "authorship": "Principal author",
+    "year": "2023",
+    "field": [
+      "Renal"
+    ],
+    "abstract": "This cross-sectional study reports immunofluorescence findings in 67 cases of Membranoproliferative Glomerulonephritis using the new classification system.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "14",
+    "title": "Assessment of clinical characteristics and FNAC findings of different thyroid lesions in a group of Bangladeshi patients",
+    "journal": "TMSS medical college journal",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2017",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "This assessment evaluates the clinical characteristics and FNAC findings of thyroid lesions specifically in Bangladeshi patients.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "15",
+    "title": "DNA sequencing: From medicine to personalized medicine",
+    "journal": "TMSS medical college journal",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2017",
+    "field": [
+      "Education"
+    ],
+    "abstract": "This article discusses the evolution of DNA sequencing technology and its impact on personalized medicine.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "16",
+    "title": "Liquid biopsy: In a nutshell",
+    "journal": "Bangladesh journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2017",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "This concise overview explains liquid biopsy technology and its applications in cancer diagnosis and monitoring.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "17",
+    "title": "A clinicopathologic study Membranoproliferative glomerulonephritis in the light of new evolving classification",
+    "journal": "Bangladesh journal of paediatric nephrology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2016",
+    "field": [
+      "Renal"
+    ],
+    "abstract": "This clinicopathologic study examines Membranoproliferative glomerulonephritis using the new evolving classification system.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "18",
+    "title": "Correlation of severe acute respiratory syndrome corona virus viral load with clinical characteristics, mortality and laboratory findings",
+    "journal": "TMSS medical college journal",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2021",
+    "field": [
+      "COVID-19"
+    ],
+    "abstract": "This study investigates the correlation between SARS-CoV-2 viral load and clinical outcomes, mortality, and laboratory findings.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "19",
+    "title": "Haematological, biochemical and infection related biomarkers among survivors and non-survivor's patients infected by SARS COVOID 19 in Bogura.",
+    "journal": "TMSS medical college journal",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2021",
+    "field": [
+      "COVID-19"
+    ],
+    "abstract": "This study compares various biomarkers between survivors and non-survivors of COVID-19 infection in Bogura.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "20",
+    "title": "Comparison of diagnostic efficacy between liquid based cytology and conventional pap smear",
+    "journal": "International Journal of Human and Health Sciences",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2016",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "21",
+    "title": "Comparison of visual inspection with acetic acid (VIA) with reflex HPV DNA test in cervical cancer screening.",
+    "journal": "Community based medical journal",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2016",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "22",
+    "title": "E cadherin expression in patients with gastric carcinoma in relation to histological prognostic parameters.",
+    "journal": "Journal of diabetic association medical college, Faridpur. ",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2016",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "23",
+    "title": "A case report on intrarenal lipoma.",
+    "journal": "TMSS Medical college Journal.",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2016",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "24",
+    "title": "Identification of Atypical Epithelial Proliferation in Fallopian Tube in Association with Ovarian Serous Carcinoma",
+    "journal": "Bangladesh journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2016",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "This comparative study evaluates the diagnostic efficacy of liquid-based cytology versus conventional Pap smear techniques.",
+    "downloadAvailable": true
+  },
+  {
+    "id": "25",
+    "title": "Immunofluorescence Findings of Membranoproliferative Glomerulonephritis: A Cross Sectional Findings of 67 Cases",
+    "journal": "Kidney foundation journal",
+    "status": "Submitted",
+    "authorship": "Principal author",
+    "year": "N/A",
+    "field": [],
+    "abstract": "",
+    "downloadAvailable": false
+  },
+  {
+    "id": "26",
+    "title": "A Case of Endometrial Tuberculosis Causing Primary Infertility",
+    "journal": "TMSS Medical college Journal",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "N/A",
+    "field": [],
+    "abstract": "",
+    "downloadAvailable": false
+  },
+  {
+    "id": "27",
+    "title": "Gliomatosis Peritonei Combined with Mature Cystic Teratoma: A Rare Case Report",
+    "journal": "Bangladesh journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "N/A",
+    "field": [],
+    "abstract": "",
+    "downloadAvailable": false
+  },
+  {
+    "id": "28",
+    "title": "Why BRCA mutation testing is important?",
+    "journal": "TMSS Medical college Journal",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "N/A",
+    "field": [],
+    "abstract": "",
+    "downloadAvailable": false
+  },
+  {
+    "id": "29",
+    "title": "The association between papillary thyroid carcinoma and thyroid stimulating hormone (TSH)",
+    "journal": "Scholars journal of applied medical sciences",
+    "status": "Published",
+    "authorship": "Co-Author",
+    "year": "N/A",
+    "field": [],
+    "abstract": "",
+    "downloadAvailable": false
+  },
+  {
+    "id": "30",
+    "title": "Diagnostic efficacy of conventional cytological smears and cell block of ascetic fluid for detection of malignant cell",
+    "journal": "Gazi medical college journal",
+    "status": "Published",
+    "authorship": "Co-Author",
+    "year": "N/A",
+    "field": [],
+    "abstract": "",
+    "downloadAvailable": false
+  },
+  {
+    "id": "31",
+    "title": "Post-graduation medical education: A pipeline to competence",
+    "journal": "TMSS Medical college Journal",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "N/A",
+    "field": [],
+    "abstract": "",
+    "downloadAvailable": false
+  },
+  {
+    "id": "32",
+    "title": "Histopathological and clinical differences between right and left sided colorectal carcinoma in a group of patient",
+    "journal": "TMSS Medical college Journal",
+    "status": "Published",
+    "authorship": "Co-Author",
+    "year": "N/A",
+    "field": [],
+    "abstract": "",
+    "downloadAvailable": false
+  },
+  {
+    "id": "33",
+    "title": "Challenges and Prospects of Establishing Genome Sequencing Laboratory in Bangladesh",
+    "journal": "Bangladesh Journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2024",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "This paper analyzes the opportunities, infrastructure demands, and clinical challenges of establishing a next-generation genome sequencing laboratory in Bangladesh.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "34",
+    "title": "Primary Squamous Cell Carcinoma of Breast in a Lactating Mother: A Rare Case Report",
+    "journal": "Bangladesh Journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2024",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "A rare clinical case report describing the histopathological diagnosis and clinical management of primary squamous cell carcinoma of the breast in a lactating patient.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "35",
+    "title": "Digital Pathology: Prospects and Challenges",
+    "journal": "Bangladesh Journal of Histopathology & Cytopathology",
+    "status": "Published",
+    "authorship": "Principal author",
+    "year": "2024",
+    "field": [
+      "Education"
+    ],
+    "abstract": "An overview of the prospects of digital pathology platforms, virtual microscopy, and AI-assisted diagnostics in low-resource medical centers.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "36",
+    "title": "A Case of Angiomyofibroblastoma in a 23-Year-Old Male",
+    "journal": "TMSS Medical College Journal",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2024",
+    "field": [
+      "Education"
+    ],
+    "abstract": "This case report details the rare occurrence of angiomyofibroblastoma in a male patient, focusing on histological features and differential diagnosis.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "37",
+    "title": "A Rare Case of Intrapulmonary Schwannoma in a 30-Year-Old Female",
+    "journal": "Tairunnessa Memorial Medical College Journal",
+    "status": "Submitted",
+    "authorship": "Principal author",
+    "year": "2026",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "A clinical case report analyzing the diagnostic challenges and histopathological features of a rare intrapulmonary schwannoma.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "38",
+    "title": "Is the Medical Education of Bangladesh Ready for Gen Z: A Mini Review",
+    "journal": "TMSS Medical College Journal",
+    "status": "Submitted",
+    "authorship": "Principal author",
+    "year": "2026",
+    "field": [
+      "Education"
+    ],
+    "abstract": "A critical mini-review exploring the learning preferences of Gen Z medical students and evaluating the readiness of the undergraduate curriculum in Bangladesh.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "39",
+    "title": "Study of Knowledge and Practice about Breast Self-Examination Among Reproductive Aged Women",
+    "journal": "Asia Pacific Journal of Cancer Care",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2025",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "A cross-sectional study evaluating the levels of awareness, knowledge, and clinical practices regarding breast self-examination in reproductive-aged women.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "40",
+    "title": "Histomorphological Spectrum of Colonic Biopsies",
+    "journal": "TMSS Medical College Journal",
+    "status": "Published",
+    "authorship": "Co author",
+    "year": "2024",
+    "field": [
+      "Cytology"
+    ],
+    "abstract": "A retrospective review investigating the diverse range of histopathological findings from colonic biopsy specimens in a tertiary referral hospital.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "41",
+    "title": "Molecular Classification of Invasive Breast Cancer Using Immunohistochemical Study: A Cross-Sectional Study",
+    "journal": "Bangladesh Journal of Histopathology & Cytopathology",
+    "status": "Submitted",
+    "authorship": "Principal author",
+    "year": "2026",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "A cross-sectional study using immunohistochemical markers to categorize invasive breast cancers into molecular subtypes for targeted therapeutic selection.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "42",
+    "title": "PDL1 Immunoexpression in Triple Negative Breast Cancer and Its Association with BRCA Variants Expressed by Next Generation Sequencing",
+    "journal": "Asia Pacific Journal of Cancer Care",
+    "status": "Submitted",
+    "authorship": "Co author",
+    "year": "2026",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "This study investigates PD-L1 expression levels in triple-negative breast cancer and its correlation with BRCA1/2 genomic variants determined by next-generation sequencing.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "43",
+    "title": "BRAF V600E-Positive Classical Papillary Thyroid Carcinoma: Integrating Histopathological Diagnosis with NGS for Personalized Oncological Management — A Case Report",
+    "journal": "Bangladesh Journal of Histopathology & Cytopathology",
+    "status": "Submitted",
+    "authorship": "Principal author",
+    "year": "2026",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "A clinical case report illustrating the integration of surgical pathology with next-generation sequencing to identify BRAF V600E mutations and customize patient management.",
+    "downloadAvailable": false
+  },
+  {
+    "id": "44",
+    "title": "MMR-Proficient Endometrial Adenocarcinoma with PTEN and CTNNB1 Mutations: Molecular Characterisation by NGS and Implications for Personalised Management",
+    "journal": "Frontiers in Pathology",
+    "status": "Submitted",
+    "authorship": "Principal author",
+    "year": "2026",
+    "field": [
+      "Cancer"
+    ],
+    "abstract": "A detailed molecular study utilizing NGS to characterize mutations in PTEN and CTNNB1 in mismatch repair (MMR) proficient endometrial adenocarcinoma, exploring treatment pathways.",
+    "downloadAvailable": false
+  }
+]

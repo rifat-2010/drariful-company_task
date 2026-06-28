@@ -91,6 +91,273 @@ With over 500 IHC cases signed out under our digital pathology and molecular ini
   }
 ];
 
+const defaultProjects = [
+  {
+    id: "proj_msi",
+    title: "MSI in Colorectal Cancer",
+    summary: "Research on microsatellite instability as a biomarker in colorectal cancer and its implications for treatment strategies.",
+    description: "This ongoing research project explores the role of microsatellite instability (MSI) as a predictive and prognostic biomarker in colorectal cancer patients. We are investigating the correlations between MSI status and treatment response, particularly to immunotherapy agents and conventional chemotherapy regimens. Our preliminary findings suggest significant differences in survival outcomes based on MSI status, with potential implications for personalized medicine approaches.",
+    status: "Ongoing",
+    year: "2022-present",
+    field: "Cancer",
+    collaborators: ["University Medical Center", "Oncology Research Institute"],
+    imageUrl: "https://i.ibb.co.com/vxkL5zL1/associate-professor2.jpg",
+    featured: true
+  },
+  {
+    id: "proj_hpv",
+    title: "HPV and Oral Cancer",
+    summary: "Investigation of Human Papillomavirus (HPV) infection and its role in the development and prognosis of oral squamous cell carcinoma.",
+    description: "This research examines the rising incidence of HPV-positive oral and oropharyngeal cancers. We have analyzed tissue samples from 120 patients to characterize the molecular and histopathological differences between HPV-positive and HPV-negative cancers. Our study has identified specific immunohistochemical markers that can help distinguish between these subtypes and potentially guide treatment decisions and prognostic assessments.",
+    status: "Published",
+    year: "2020-2022",
+    field: "Cancer",
+    collaborators: ["National Cancer Institute", "Dental Medicine Research Center"],
+    imageUrl: "https://i.ibb.co.com/pjt7WF07/clinical-experience.jpg",
+    featured: true
+  },
+  {
+    id: "proj_fb",
+    title: "Facebook in Medical Education",
+    summary: "Exploring the use of Facebook as a platform for pathology education and professional networking in the medical community.",
+    description: "This innovative educational research project evaluates the effectiveness of using Facebook as a platform for pathology education among medical students and residents. We have created a structured educational intervention using a closed Facebook group where pathology case studies, educational resources, and expert discussions are shared. Our findings demonstrate significant improvements in diagnostic skills and knowledge retention compared to traditional educational methods alone.",
+    status: "Published",
+    year: "2019-2021",
+    field: "Education",
+    collaborators: ["Medical Education Department", "Digital Learning Initiative"],
+    imageUrl: "https://i.ibb.co.com/ymyYvff2/Whats-App-Image-2025-05-15-at-13-04-19-591c2270.jpg",
+    featured: true
+  },
+  {
+    id: "proj_tbl1",
+    title: "Somatic Mutation Landscape of Solid Tumors in Bangladeshi Patients: A Multi-Cancer Analysis of 800+ Cases Using Targeted NGS.",
+    summary: "Large-scale genomic profiling study analyzing somatic mutations in 800+ Bangladeshi solid cancer cases.",
+    description: "This research details the somatic mutation profiles of solid tumors in Bangladeshi patients. We utilize targeted NGS sequencing to identify mutation frequencies and clinically actionable variants to build a regional precision oncology reference dataset.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Molecular Pathology",
+    collaborators: ["TMSS Biomolecular Lab", "TMSS Cancer Centre"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_tbl2",
+    title: "EGFR Mutation Spectrum in Non-Small Cell Lung Cancer in Bangladesh: Prevalence, Co-mutations, and Therapeutic Implications from a Real-World NGS Cohort.",
+    summary: "Investigating EGFR variants and co-mutations in Bangladeshi non-small cell lung cancer (NSCLC) patients.",
+    description: "This real-world cohort study investigates EGFR mutation frequencies, variant types, and co-occurring mutations in NSCLC. The study evaluates the therapeutic implications and response rates to EGFR Tyrosine Kinase Inhibitors (TKIs) in our population.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Cancer",
+    collaborators: ["TMSS Biomolecular Lab", "Oncology Department, TMSS Medical College"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_tbl3",
+    title: "PIK3CA Mutation Frequency and Actionability in Gynaecological Malignancies in South Asia: First Large-Scale NGS Data from Bangladesh.",
+    summary: "First large-scale genomic data analyzing PIK3CA mutations and actionability in gynaecological cancers in Bangladesh.",
+    description: "This study profiles PIK3CA variants in cervical, endometrial, and ovarian cancers. We analyze variant frequencies and actionability for targeted PI3K/AKT/mTOR pathway inhibitors, creating the first large-scale gynaecological genomic dataset in Bangladesh.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Cancer",
+    collaborators: ["TMSS Biomolecular Lab", "Department of Gynaecology, TMSS Medical College"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_tbl4",
+    title: "Genomic Profiling of Acute Myeloid Leukaemia Using the oncoReveal Myeloid Panel: A Bangladeshi Single-Centre Experience and Comparison with Global Datasets.",
+    summary: "Using targeted NGS myeloid panel to profile Acute Myeloid Leukaemia (AML) in a Bangladeshi single-centre setting.",
+    description: "This research evaluates mutational signatures in Bangladeshi AML patients using a specialized NGS myeloid panel. We compare local mutational spectrums with global clinical registries to identify unique regional variations.",
+    status: "Ongoing",
+    year: "2025-present",
+    field: "Molecular Pathology",
+    collaborators: ["TMSS Biomolecular Lab", "Hematology Department, TMSS Medical College"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_tbl5",
+    title: "Prevalence of Clinically Actionable Mutations in Solid and Haematological Cancers: A Cross-Tumour NGS Study from a Resource-Limited South Asian Setting.",
+    summary: "A cross-tumour analysis of actionable mutations in a resource-limited South Asian diagnostic lab.",
+    description: "This study determines the proportion of cancer patients eligible for targeted therapeutics based on NGS. It maps genomic profiles to available targeted therapies to assess the gap in drug access in low-resource settings.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Cancer",
+    collaborators: ["TMSS Biomolecular Lab", "TMSS Cancer Centre"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_tbl6",
+    title: "Variant Classification Using AMP/ASCO/CAP Guidelines in a Real-World Cancer NGS Laboratory: Concordance with ClinVar and Therapeutic Decisions in 800 Cases.",
+    summary: "Applying professional guidelines (AMP/ASCO/CAP) for variant classification in 800 clinical cancer cases.",
+    description: "This study evaluates the clinical utility and concordance of AMP/ASCO/CAP guidelines for variant interpretation. We analyze our laboratory pipeline variant calls against international ClinVar records for 800 cancer cases.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Molecular Pathology",
+    collaborators: ["TMSS Biomolecular Lab", "Xing Holdings, Australia"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_tbl7",
+    title: "Targeted Therapy Eligibility Based on NGS Profiling in Bangladeshi Cancer Patients: A Gap Analysis Between Actionable Mutations and Drug Accessibility.",
+    summary: "Gap analysis comparing NGS actionable mutations with practical access to targeted oncology drugs.",
+    description: "This research provides clinical evidence on the mismatch between molecular eligibility for targeted therapies and actual patient access to these treatments in Bangladesh.",
+    status: "Ongoing",
+    year: "2025-present",
+    field: "Cancer",
+    collaborators: ["TMSS Biomolecular Lab", "TMSS Cancer Centre"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_tbl8",
+    title: "Co-occurring Somatic Mutations and Pathway-Level Aberrations Across Multiple Cancer Types: Insights from a 47-Gene NGS Panel in a South Asian Population.",
+    summary: "Analyzing pathway-level genomic co-mutations in cancer using a multi-gene NGS panel.",
+    description: "We investigate complex co-mutations and molecular pathway networks in diverse solid cancers using clinical NGS panel sequencing, comparing results to TCGA datasets.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Molecular Pathology",
+    collaborators: ["TMSS Biomolecular Lab", "Department of Research, TMSS Medical College"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_tbl9",
+    title: "Implementation of Clinical-Grade NGS Testing for Cancer in Bangladesh: Laboratory Workflow, Quality Metrics, and First-Year Real-World Outcomes.",
+    summary: "Clinical verification, QMS metrics, and real-world outcomes from establishing clinical-grade NGS workflows.",
+    description: "This implementation study shares the technical validation, quality metrics, and operational standards involved in achieving the ISO 15189:2022 accreditation for NGS testing at TMSS Biomolecular Lab.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Molecular Pathology",
+    collaborators: ["TMSS Biomolecular Lab", "Xing Holdings, Australia"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_tbl10",
+    title: "Comparison of Somatic Mutation Frequencies in South Asian vs. Western Cancer Populations: Evidence from Targeted NGS in Bangladeshi Solid and Liquid Tumours.",
+    summary: "Genomic comparison study of cancer somatic variant frequencies between South Asian and Western patients.",
+    description: "This research contrasts the genomic profile of solid and liquid tumors in Bangladesh with Western public datasets, identifying potential genomic disparities in cancer drivers.",
+    status: "Ongoing",
+    year: "2025-present",
+    field: "Molecular Pathology",
+    collaborators: ["TMSS Biomolecular Lab", "TMSS Cancer Centre"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_cv1",
+    title: "Institution Based Cancer Registry at a Tertiary Level Hospital in the Northern part of Bangladesh.",
+    summary: "Establishing a hospital-based cancer database registry to track oncology patterns in Northern Bangladesh.",
+    description: "This epidemiological project aims to build a comprehensive cancer registry at TMSS Medical College Hospital to analyze tumor demographics, staging, and survival rates.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Cancer",
+    collaborators: ["TMSS Cancer Centre"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_cv2",
+    title: "Molecular Classification of Invasive Breast Cancer: A Cross-Sectional Study.",
+    summary: "Cross-sectional classification of invasive breast cancers using immunohistochemical (IHC) profiling.",
+    description: "This study classifies breast cancer into molecular subtypes (Luminal A, Luminal B, HER2-enriched, Triple-Negative) using IHC markers to guide treatment protocols.",
+    status: "Submitted",
+    year: "2026",
+    field: "Cancer",
+    collaborators: ["Department of Histopathology, TMSS Medical College"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_cv3",
+    title: "Is Bangladeshi Medical Education Ready for Gen Z: A Comprehensive Review.",
+    summary: "Reviewing local medical curriculum readiness and pedagogical shifts for Gen Z medical learners.",
+    description: "This educational review analyzes the learning preferences, tech integration, and curriculum changes required to train the upcoming generation of medical students.",
+    status: "Submitted",
+    year: "2026",
+    field: "Education",
+    collaborators: ["Medical Education Unit, TMSS Medical College"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_cv4",
+    title: "Mutational Profile among different cancers in Bangladesh.",
+    summary: "Descriptive study of mutational distribution patterns in common cancers in the country.",
+    description: "A screening research study collecting mutational logs from multiple oncology panels to identify dominant gene mutations (TP53, KRAS, PIK3CA) across Bangladeshi cohorts.",
+    status: "Ongoing",
+    year: "2025-present",
+    field: "Cancer",
+    collaborators: ["TMSS Biomolecular Lab"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_cv5",
+    title: "Beyond the White Coat: Mental Health, Burnout, and Work-Life Balance Among Healthcare Professionals.",
+    summary: "Cross-sectional survey of psychological burnout and work-life balance in local clinical staff.",
+    description: "This psychiatric and social survey explores work stress, administrative loads, and quality of life metrics in doctors and nursing staff at a high-volume tertiary hospital.",
+    status: "Ongoing",
+    year: "2025-present",
+    field: "Education",
+    collaborators: ["Medical Education Unit, TMSS Medical College"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_cv6",
+    title: "Histomorphological Spectrum of Colonic Biopsies: A Three-Year Retrospective Study at Two Diagnostic Centers.",
+    summary: "Three-year retrospective review of histopathological findings in colonic biopsies.",
+    description: "This study categorizes inflammatory, hyperplastic, and neoplastic mucosal lesions in colonic specimens to establish local pathology patterns.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Cytology",
+    collaborators: ["TMSS Cyto-Histopathology Laboratory"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_cv7",
+    title: "Gen Boz learning styles and preferences: A Cross Sectional Study in a Medical College of Bangladesh.",
+    summary: "Academic survey mapping learning preferences and digital tool use in medical students.",
+    description: "This study surveys undergraduate students on digital lectures, flipped classrooms, and online case repositories to optimize medical pedagogy.",
+    status: "Ongoing",
+    year: "2024-present",
+    field: "Education",
+    collaborators: ["Medical Education Unit, TMSS Medical College"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_cv8",
+    title: "BRCA1 and BRCA2 mutation status in Bangladeshi women with positive family history of breast cancer: A Cross-Sectional Study.",
+    summary: "NGS screening of germline BRCA1/2 mutations in familial high-risk breast cancer patients.",
+    description: "This research screens high-risk breast cancer cohorts for hereditary pathogenic variants using NGS, aiding patient counselling and preventive screening.",
+    status: "Ongoing",
+    year: "2025-present",
+    field: "Cancer",
+    collaborators: ["TMSS Biomolecular Lab", "Department of Oncology"],
+    imageUrl: "",
+    featured: false
+  },
+  {
+    id: "proj_cv9",
+    title: "Healing the Healers: Psychological burn-out and Work-Life Integration among Healthcare Professionals.",
+    summary: "Interventional study analyzing support mechanisms to mitigate burnout in healthcare workers.",
+    description: "This research evaluates the efficacy of hospital support networks, peer counselling, and schedule adjustments in reducing workplace stress and burnout.",
+    status: "Ongoing",
+    year: "2025-present",
+    field: "Education",
+    collaborators: ["Medical Education Unit, TMSS Medical College"],
+    imageUrl: "",
+    featured: false
+  }
+];
+
 // Helper to initialize localStorage if not already done
 const initLocalStorage = () => {
   if (!localStorage.getItem("blogs")) {
@@ -98,6 +365,9 @@ const initLocalStorage = () => {
   }
   if (!localStorage.getItem("gallery")) {
     localStorage.setItem("gallery", JSON.stringify(defaultGallery));
+  }
+  if (!localStorage.getItem("projects")) {
+    localStorage.setItem("projects", JSON.stringify(defaultProjects));
   }
 };
 
@@ -436,4 +706,123 @@ export const uploadImageFile = async (file) => {
   
   // Local/Fallback mode: compress and return Base64 Data URL
   return await compressAndConvertToBase64(file);
+};
+
+/**
+ * RESEARCH PROJECT SERVICES
+ */
+export const getProjects = async () => {
+  if (isFirebaseConfigured) {
+    try {
+      const querySnapshot = await getDocs(collection(db, "projects"));
+      const projectsList = [];
+      querySnapshot.forEach((docSnap) => {
+        projectsList.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      
+      // If Firestore is empty, seed it with default projects
+      if (projectsList.length === 0) {
+        console.log("Firestore projects collection is empty. Seeding with default projects...");
+        for (const proj of defaultProjects) {
+          const { id, ...projWithoutId } = proj;
+          await addDoc(collection(db, "projects"), projWithoutId);
+        }
+        // Re-fetch
+        const freshSnapshot = await getDocs(collection(db, "projects"));
+        const seededList = [];
+        freshSnapshot.forEach((docSnap) => {
+          seededList.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        return seededList;
+      }
+      
+      return projectsList;
+    } catch (err) {
+      console.error("Firestore getProjects failed, falling back to LocalStorage:", err);
+    }
+  }
+
+  // LocalStorage Fallback
+  initLocalStorage();
+  const projectsStr = localStorage.getItem("projects");
+  return JSON.parse(projectsStr || "[]");
+};
+
+export const addProject = async (projectData) => {
+  const newProj = {
+    ...projectData,
+    featured: projectData.featured || false,
+    collaborators: Array.isArray(projectData.collaborators) 
+      ? projectData.collaborators 
+      : typeof projectData.collaborators === 'string' 
+        ? projectData.collaborators.split(',').map(s => s.trim()).filter(Boolean) 
+        : []
+  };
+
+  if (isFirebaseConfigured) {
+    try {
+      const docRef = await addDoc(collection(db, "projects"), newProj);
+      return { id: docRef.id, ...newProj };
+    } catch (err) {
+      console.error("Firestore addProject failed, falling back to LocalStorage:", err);
+    }
+  }
+
+  // LocalStorage Fallback
+  initLocalStorage();
+  const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+  newProj.id = "proj_" + Date.now();
+  projects.unshift(newProj);
+  localStorage.setItem("projects", JSON.stringify(projects));
+  return newProj;
+};
+
+export const updateProject = async (id, projectData) => {
+  const updatedProj = {
+    ...projectData,
+    collaborators: Array.isArray(projectData.collaborators) 
+      ? projectData.collaborators 
+      : typeof projectData.collaborators === 'string' 
+        ? projectData.collaborators.split(',').map(s => s.trim()).filter(Boolean) 
+        : []
+  };
+
+  if (isFirebaseConfigured) {
+    try {
+      const docRef = doc(db, "projects", id);
+      await updateDoc(docRef, updatedProj);
+      return { id, ...updatedProj };
+    } catch (err) {
+      console.error("Firestore updateProject failed, falling back to LocalStorage:", err);
+    }
+  }
+
+  // LocalStorage Fallback
+  initLocalStorage();
+  const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+  const index = projects.findIndex((p) => p.id.toString() === id.toString());
+  if (index !== -1) {
+    projects[index] = { ...projects[index], ...updatedProj };
+    localStorage.setItem("projects", JSON.stringify(projects));
+    return projects[index];
+  }
+  throw new Error("Project not found");
+};
+
+export const deleteProject = async (id) => {
+  if (isFirebaseConfigured) {
+    try {
+      await deleteDoc(doc(db, "projects", id));
+      return true;
+    } catch (err) {
+      console.error("Firestore deleteProject failed, falling back to LocalStorage:", err);
+    }
+  }
+
+  // LocalStorage Fallback
+  initLocalStorage();
+  const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+  const filtered = projects.filter((p) => p.id.toString() !== id.toString());
+  localStorage.setItem("projects", JSON.stringify(filtered));
+  return true;
 };
