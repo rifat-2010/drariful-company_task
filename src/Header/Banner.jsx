@@ -1,5 +1,5 @@
 import { FaEnvelope } from "react-icons/fa";
-import profile from "../assets/profile2.jpg";
+import profile from "../assets/latest-profile-pic.jpg";
 import frame1 from "../assets/Frame-blue.png";
 import frame2 from "../assets/frame-white.png";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
