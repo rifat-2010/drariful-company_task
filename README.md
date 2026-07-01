@@ -44,7 +44,7 @@ bun add @radix-ui/react-dialog @radix-ui/react-slot @radix-ui/react-tabs class-v
 3. Import and use the component in your application:
 
 ```jsx
-import { ExperienceSection } from './path/to/ExperienceSection';
+import { ExperienceSection } from "./path/to/ExperienceSection";
 
 function App() {
   return (
@@ -75,25 +75,19 @@ export const experienceData = [
         institution: "Company/Institution",
         duration: "2020 - Present",
         icon: "🏢", // Emoji or any icon
-        responsibilities: [
-          "Responsibility 1",
-          "Responsibility 2",
-        ],
-        highlights: [
-          "Achievement 1",
-          "Achievement 2",
-        ],
+        responsibilities: ["Responsibility 1", "Responsibility 2"],
+        highlights: ["Achievement 1", "Achievement 2"],
         images: [
           {
             id: "img1",
             src: "https://example.com/image.jpg",
             alt: "Alt text",
             caption: "Image caption",
-          }
+          },
         ],
-      }
+      },
     ],
-  }
+  },
 ];
 ```
 
@@ -106,3 +100,30 @@ This component uses Tailwind CSS for styling. You can customize the appearance b
 3. Adding custom styles in your CSS file
 
 The primary color is set to blue-500 (`#3b82f6`) by default, which can be changed in the Tailwind configuration.
+
+## Firebase Environment Setup
+
+This project uses Firebase for the live CMS backend in production. If Firebase variables are missing, the app falls back to browser localStorage and the live published content will not be shared across deployments.
+
+To use Firebase locally, copy `.env.example` to `.env` and fill in your Firebase keys:
+
+```bash
+cp .env.example .env
+```
+
+Then add your actual Firebase values to the `.env` file.
+
+### Netlify deployment
+
+If you deploy to Netlify, do not commit `.env` to source control. Instead, add these variables in Netlify site settings:
+
+- `VITE_FIREBASE_API_KEY`
+- `VITE_FIREBASE_AUTH_DOMAIN`
+- `VITE_FIREBASE_PROJECT_ID`
+- `VITE_FIREBASE_STORAGE_BUCKET`
+- `VITE_FIREBASE_MESSAGING_SENDER_ID`
+- `VITE_FIREBASE_APP_ID`
+
+After setting the environment variables in Netlify, trigger a new deploy so the build picks up the values.
+
+If you still see `LocalStorage Fallback Client` in the dashboard after deploy, then one or more keys are still missing.

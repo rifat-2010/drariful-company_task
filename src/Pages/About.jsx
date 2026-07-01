@@ -17,90 +17,12 @@ const About = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-center px-0 lg:px-10">
-            {/* Left Section - Image */}
-            <div className="flex justify-center lg:justify-start">
-              <img
-                src={profileSm}
-                alt="About Me"
-                className="rounded-lg w-[250px] lg:w-[400px]"
-              />
-            </div>
-
-            {/* Right Section - Content */}
-            <div className="primary-text">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-bold heading">Name:</span> D.M. Arifur
-                    Rahman
-                  </p>
-                  <p>
-                    <span className="font-bold heading">Education:</span>{" "}
-                    MD(Pathology) | MBBS
-                  </p>
-                  
-                  <p>
-                    <span className="font-bold heading">Father's Name:</span> DM
-                    Mostafizur Rahman
-                  </p>
-                  <p>
-                    <span className="font-bold heading">Mother's Name:</span>{" "}
-                    Ferdousi Begum{" "}
-                  </p>
-                  <p>
-                    <span className="font-bold heading">Present Address:</span>{" "}
-                    Snighdha Residential Area, Uposhohor, Bogura
-                  </p>
-                  <p>
-                    <span className="font-bold heading">
-                      Permanent Address:
-                    </span>{" "}
-                    Baluvora, Naogaon Sadar, Naogaon
-                  </p>
-                  <p>
-                    <span className="font-bold heading">
-                      Place of Birth / Hometown:
-                    </span>{" "}
-                    Naogaon Sadar, Naogaon
-                  </p>
-                  <p>
-                    <span className="font-bold heading">Gender:</span> Male
-                  </p>
-                  <p>
-                    <span className="font-bold heading">Marital Status:</span>{" "}
-                    Married with two children
-                  </p>
-                </div>
-
-                <div className="space-y-1">
-                  <p>
-                    <span className="font-bold heading">Phone:</span> 01676
-                    810855
-                  </p>
-                  <p>
-                    <span className="font-bold heading">Email:</span> arifurrahmandm@gmail.com
-                  </p>
-
-                  <p>
-                    <span className="font-bold heading">Religion:</span> Islam
-                  </p>
-                  <p>
-                    <span className="font-bold heading">Nationality:</span>{" "}
-                    Bangladeshi
-                  </p>
-                  <p>
-                    <span className="font-bold heading">Blood Group:</span> O+ve
-                  </p>
-                  <p>
-                    <a href="#" className="font-bold heading">
-                      ResearchGate Profile:
-                    </a>{" "}
-                    D-M-Rahman
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="flex justify-center px-0 lg:px-10">
+            <img
+              src={profileSm}
+              alt="About Me"
+              className="rounded-lg w-[250px] lg:w-[400px]"
+            />
           </div>
         </div>
         <section id="about">
@@ -154,19 +76,31 @@ const About = () => {
               As the Laboratory Director of the TMSS Biomolecular Lab, Dr.
               Rahman founded Bangladesh's first NGS-based cancer diagnostics
               center. Trained by international experts from Xing Holdings,
-              Australia, he successfully achieved <span className="font-semibold">ISO 15189:2022 accreditation</span> for TMSS Biomolecular Lab in March 2026. Accredited by EIAC under the ILAC framework, it is the first and only accredited NGS laboratory for molecular cancer diagnostics in South Asia, bringing world-class precision diagnostics to underserved communities.
+              Australia, he successfully achieved{" "}
+              <span className="font-semibold">
+                ISO 15189:2022 accreditation
+              </span>{" "}
+              for TMSS Biomolecular Lab in March 2026. Accredited by EIAC under
+              the ILAC framework, it is the first and only accredited NGS
+              laboratory for molecular cancer diagnostics in South Asia,
+              bringing world-class precision diagnostics to underserved
+              communities.
             </p>
 
             <h3 class="heading text-lg font-semibold mb-2">
               Academic & Research Contributions
             </h3>
             <p class="mb-6">
-              With <span className="font-semibold">44 peer-reviewed publications</span> (37 published and 7 submitted),
-              Dr. Rahman is an enthusiastic researcher focusing on
-              nephropathology, gynecologic and lymphoid pathology, head and neck
-              cancers, and molecular diagnostics. His work aims to bridge
-              laboratory findings with real-world clinical applications through
-              translational research and precision cancer medicine.
+              With{" "}
+              <span className="font-semibold">
+                44 peer-reviewed publications
+              </span>{" "}
+              (37 published and 7 submitted), Dr. Rahman is an enthusiastic
+              researcher focusing on nephropathology, gynecologic and lymphoid
+              pathology, head and neck cancers, and molecular diagnostics. His
+              work aims to bridge laboratory findings with real-world clinical
+              applications through translational research and precision cancer
+              medicine.
             </p>
 
             <h3 class="heading text-lg font-semibold mb-2">
@@ -188,8 +122,8 @@ const About = () => {
             <p class="mb-6">
               Dr. Rahman has received several accolades, including the{" "}
               <span className="font-semibold">
-                Annual Performance Award (2025), Best Teacher Award (2023), TMSS Service Award (2022), and Mujib
-                Year Service Award (2021)
+                Annual Performance Award (2025), Best Teacher Award (2023), TMSS
+                Service Award (2022), and Mujib Year Service Award (2021)
               </span>
               , honoring his excellence in diagnostics, teaching, and community
               service.
