@@ -656,8 +656,21 @@ const seedData = async () => {
   }
 };
 
+app.get("/", (_req, res) => {
+  res.json({
+    ok: true,
+    service: "drariful-cms-api",
+    message: "Backend is running. Use the API endpoints below.",
+    endpoints: ["/api/health", "/api/blogs", "/api/gallery", "/api/projects"],
+  });
+});
+
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "drariful-cms-api", database: DB_NAME });
+});
+
+app.get("/api/healt", (_req, res) => {
+  res.redirect(307, "/api/health");
 });
 
 app.get("/api/blogs", async (_req, res) => {
@@ -819,6 +832,21 @@ const startServer = async () => {
     console.error("Failed to start local server:", error.message);
   }
 };
+
+app.use((req, res) => {
+  res.status(404).json({
+    ok: false,
+    message: "Route not found",
+    requestedPath: req.originalUrl,
+    availableEndpoints: [
+      "/",
+      "/api/health",
+      "/api/blogs",
+      "/api/gallery",
+      "/api/projects",
+    ],
+  });
+});
 
 if (require.main === module) {
   startServer();
