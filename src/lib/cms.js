@@ -17,7 +17,10 @@ import {
 } from "firebase/firestore";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://drariful-adminpannel-backend-f7m3i1bt0.vercel.app/api";
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV
+    ? "http://localhost:5000/api"
+    : "https://drariful-adminpannel-backend-f7m3i1bt0.vercel.app/api");
 
 const apiRequest = async (path, options = {}) => {
   const response = await fetch(`${API_BASE_URL}${path}`, {

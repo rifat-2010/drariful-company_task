@@ -1,129 +1,135 @@
-# Professional Experience Section
+# Dr. Ariful Rahman Portfolio & CMS
 
-A reusable React component for displaying professional experience with a tabbed interface, expandable cards, and a lightbox image gallery. This version is built with JavaScript instead of TypeScript.
+A modern professional portfolio website for Dr. Ariful Rahman, built with React, Vite, Tailwind CSS, and a MongoDB-backed CMS API. The project includes a public portfolio site, a CMS/admin dashboard, blog management, gallery management, and research project management.
+
+## Live Links
+
+- Frontend: https://drariful-protfolio.netlify.app/
+- Backend API: https://drariful-adminpannel-backend-f7m3i1bt0.vercel.app
+
+## Overview
+
+This project is designed to showcase:
+
+- Professional background and academic experience
+- Publications, books, and achievements
+- Gallery of professional activities and events
+- Research projects and current initiatives
+- A lightweight content management dashboard for updating site content
+
+## Tech Stack
+
+- Frontend: React, Vite, Tailwind CSS, JavaScript
+- Backend: Node.js, Express.js
+- Database: MongoDB Atlas
+- Authentication: Firebase Auth (with a local fallback for development)
+- Hosting: Netlify for frontend, Vercel for backend
 
 ## Features
 
-- Tab-based categories for different types of experience
-- Expandable experience cards with details
-- Image gallery with lightbox functionality
-- Smooth animations with Framer Motion
-- Responsive design with Tailwind CSS
+- Responsive portfolio pages for Home, About, Resume, Publications, Gallery, Blogs, and Contact
+- CMS dashboard to manage blogs, gallery items, and research projects
+- Live API-driven content delivery from MongoDB
+- Fallback behavior for offline or missing backend scenarios
+- Professional UI with modern styling and reusable components
 
-## Installation
+## Project Structure
 
-1. Install the required dependencies:
+- src/ — frontend application source
+- src/Pages/ — main page components
+- src/components/ — reusable UI sections
+- src/lib/ — CMS and API helper modules
+- server/ — backend API and database seeding logic
 
-```bash
-bun install
-```
+## Getting Started
 
-2. Start the development server:
+### 1. Install dependencies
 
-```bash
-bun run dev
-```
-
-## Using the ExperienceSection Component
-
-To use this component in your own project:
-
-1. Copy the required files:
-   - `src/components/` directory
-   - `src/data/` directory
-   - `src/ui/` directory
-   - `src/lib/utils.js`
-   - `src/ExperienceSection.jsx`
-
-2. Install the necessary dependencies:
+From the project root:
 
 ```bash
-bun add @radix-ui/react-dialog @radix-ui/react-slot @radix-ui/react-tabs class-variance-authority clsx framer-motion lucide-react tailwind-merge
+npm install
 ```
 
-3. Import and use the component in your application:
-
-```jsx
-import { ExperienceSection } from "./path/to/ExperienceSection";
-
-function App() {
-  return (
-    <div>
-      <header>...</header>
-      <main>
-        <ExperienceSection />
-      </main>
-      <footer>...</footer>
-    </div>
-  );
-}
-```
-
-## Customizing the Experience Data
-
-To customize the experience data, edit the `src/data/experience-data.js` file. The data structure follows this pattern:
-
-```js
-export const experienceData = [
-  {
-    id: "category-id",
-    title: "Category Title",
-    experiences: [
-      {
-        id: "experience-id",
-        title: "Job Title",
-        institution: "Company/Institution",
-        duration: "2020 - Present",
-        icon: "🏢", // Emoji or any icon
-        responsibilities: ["Responsibility 1", "Responsibility 2"],
-        highlights: ["Achievement 1", "Achievement 2"],
-        images: [
-          {
-            id: "img1",
-            src: "https://example.com/image.jpg",
-            alt: "Alt text",
-            caption: "Image caption",
-          },
-        ],
-      },
-    ],
-  },
-];
-```
-
-## Styling
-
-This component uses Tailwind CSS for styling. You can customize the appearance by:
-
-1. Modifying the Tailwind classes in the component files
-2. Updating the theme in `tailwind.config.js`
-3. Adding custom styles in your CSS file
-
-The primary color is set to blue-500 (`#3b82f6`) by default, which can be changed in the Tailwind configuration.
-
-## Firebase Environment Setup
-
-This project uses Firebase for the live CMS backend in production. If Firebase variables are missing, the app falls back to browser localStorage and the live published content will not be shared across deployments.
-
-To use Firebase locally, copy `.env.example` to `.env` and fill in your Firebase keys:
+From the server folder:
 
 ```bash
-cp .env.example .env
+cd server
+npm install
 ```
 
-Then add your actual Firebase values to the `.env` file.
+### 2. Start the frontend
 
-### Netlify deployment
+```bash
+npm run dev
+```
 
-If you deploy to Netlify, do not commit `.env` to source control. Instead, add these variables in Netlify site settings:
+### 3. Start the backend
 
-- `VITE_FIREBASE_API_KEY`
-- `VITE_FIREBASE_AUTH_DOMAIN`
-- `VITE_FIREBASE_PROJECT_ID`
-- `VITE_FIREBASE_STORAGE_BUCKET`
-- `VITE_FIREBASE_MESSAGING_SENDER_ID`
-- `VITE_FIREBASE_APP_ID`
+```bash
+cd server
+npm start
+```
 
-After setting the environment variables in Netlify, trigger a new deploy so the build picks up the values.
+The backend API will be available at:
 
-If you still see `LocalStorage Fallback Client` in the dashboard after deploy, then one or more keys are still missing.
+- http://localhost:5000/
+- http://localhost:5000/api/health
+- http://localhost:5000/api/blogs
+- http://localhost:5000/api/gallery
+- http://localhost:5000/api/projects
+
+## Environment Variables
+
+### Frontend
+
+Create a .env file in the project root if needed:
+
+```bash
+VITE_API_BASE_URL=https://drariful-adminpannel-backend-f7m3i1bt0.vercel.app/api
+```
+
+### Backend
+
+Create a server/.env file with your MongoDB credentials:
+
+```bash
+DB_USERNAME=your_mongodb_username
+DB_PASSWORD=your_mongodb_password
+DB_CLUSTER=your_cluster_url_without_https
+DB_NAME=drariful_cms
+PORT=5000
+```
+
+## Deployment Notes
+
+### Frontend (Netlify)
+
+- Deploy the root project folder to Netlify
+- Set the build command to:
+
+```bash
+npm run build
+```
+
+- Set the publish directory to:
+
+```bash
+dist
+```
+
+### Backend (Vercel)
+
+- Deploy the server folder to Vercel
+- Use the Vercel configuration provided in server/vercel.json
+- Add the backend environment variables in Vercel project settings
+
+## CMS and Admin Notes
+
+- The admin dashboard is connected to the backend API for blogs, gallery items, and projects
+- If the API is unavailable, the app falls back to browser localStorage so the interface remains usable
+- For production use, ensure the live backend URL is correctly configured in the frontend environment variables
+
+## License
+
+This project is intended for personal/professional portfolio use.
