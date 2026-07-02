@@ -16,24 +16,54 @@ import {
   orderBy,
 } from "firebase/firestore";
 
-const API_BASE_URL =
+// Use the deployed backend API only. UI should fetch from the production
+// backend endpoint so the public app shows database-driven blog, gallery,
+// and project content or empty state when the API cannot return data.
+const API_BASE_URL = (
   import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.DEV
-    ? "http://localhost:5000/api"
-    : "https://drariful-adminpannel-backend-f7m3i1bt0.vercel.app/api");
+  "https://drariful-adminpannel-backend-5uzaf7jsw.vercel.app/api"
+).replace(/\/$/, "");
 
 const apiRequest = async (path, options = {}) => {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-    ...options,
-  });
+  const url = `${API_BASE_URL}${path}`;
+  let response;
+
+  try {
+    response = await fetch(url, {
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+      ...options,
+    });
+  } catch (networkError) {
+    throw new Error(
+      `Network error fetching ${url}: ${networkError.message || "Failed to fetch"}`,
+    );
+  }
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "API request failed");
+    const errorText = await response.text().catch(() => "");
+    const location = response.headers.get("location");
+    throw new Error(
+      `API error ${response.status} ${response.statusText} from ${url}${
+        location ? ` redirect -> ${location}` : ""
+      }: ${errorText || "No response body"}`,
+    );
   }
 
   if (response.status === 204) return null;
+
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    const bodyText = await response.text().catch(() => "");
+    throw new Error(
+      `Invalid API response from ${url} (status ${response.status}, content-type ${contentType}). Response body: ${bodyText.slice(0, 240)}`,
+    );
+  }
+
   return response.json();
 };
 
@@ -616,20 +646,22 @@ const defaultProjects = [
   },
 ];
 
-// Helper to initialize localStorage if not already done
+// Initialize localStorage keys with empty arrays when missing. This is only
+// used for auth fallback; CMS content should always come from the API.
 const initLocalStorage = () => {
   if (!localStorage.getItem("blogs")) {
-    localStorage.setItem("blogs", JSON.stringify(defaultBlogs));
+    localStorage.setItem("blogs", JSON.stringify([]));
   }
   if (!localStorage.getItem("gallery")) {
-    localStorage.setItem("gallery", JSON.stringify(defaultGallery));
+    localStorage.setItem("gallery", JSON.stringify([]));
   }
   if (!localStorage.getItem("projects")) {
-    localStorage.setItem("projects", JSON.stringify(defaultProjects));
+    localStorage.setItem("projects", JSON.stringify([]));
   }
 };
 
-// Initialize right away for mock operations
+// Ensure keys exist (empty) so fallback returns empty arrays rather than
+// previously seeded content.
 initLocalStorage();
 
 /**
@@ -703,19 +735,8 @@ export const subscribeToAuth = (callback) => {
  * BLOG SERVICES
  */
 export const getBlogs = async () => {
-  try {
-    const response = await apiRequest("/blogs");
-    return response || [];
-  } catch (error) {
-    console.error(
-      "MongoDB blogs fetch failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const blogsStr = localStorage.getItem("blogs");
-    const list = JSON.parse(blogsStr || "[]");
-    return list.sort((a, b) => new Date(b.date) - new Date(a.date));
-  }
+  const response = await apiRequest("/blogs");
+  return response || [];
 };
 
 export const addBlog = async (blogData) => {
@@ -730,16 +751,8 @@ export const addBlog = async (blogData) => {
       body: JSON.stringify(newBlog),
     });
   } catch (error) {
-    console.error(
-      "MongoDB addBlog failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const blogs = JSON.parse(localStorage.getItem("blogs") || "[]");
-    newBlog.id = "blog_" + Date.now();
-    blogs.unshift(newBlog);
-    localStorage.setItem("blogs", JSON.stringify(blogs));
-    return newBlog;
+    console.error("MongoDB addBlog failed:", error);
+    throw error;
   }
 };
 
@@ -750,19 +763,8 @@ export const updateBlog = async (id, blogData) => {
       body: JSON.stringify(blogData),
     });
   } catch (error) {
-    console.error(
-      "MongoDB updateBlog failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const blogs = JSON.parse(localStorage.getItem("blogs") || "[]");
-    const index = blogs.findIndex((b) => b.id === id);
-    if (index !== -1) {
-      blogs[index] = { ...blogs[index], ...blogData };
-      localStorage.setItem("blogs", JSON.stringify(blogs));
-      return blogs[index];
-    }
-    throw new Error("Blog not found");
+    console.error("MongoDB updateBlog failed:", error);
+    throw error;
   }
 };
 
@@ -771,15 +773,8 @@ export const deleteBlog = async (id) => {
     await apiRequest(`/blogs/${id}`, { method: "DELETE" });
     return true;
   } catch (error) {
-    console.error(
-      "MongoDB deleteBlog failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const blogs = JSON.parse(localStorage.getItem("blogs") || "[]");
-    const filtered = blogs.filter((b) => b.id !== id);
-    localStorage.setItem("blogs", JSON.stringify(filtered));
-    return true;
+    console.error("MongoDB deleteBlog failed:", error);
+    throw error;
   }
 };
 
@@ -787,18 +782,8 @@ export const deleteBlog = async (id) => {
  * GALLERY SERVICES
  */
 export const getGallery = async () => {
-  try {
-    const response = await apiRequest("/gallery");
-    return response || [];
-  } catch (error) {
-    console.error(
-      "MongoDB gallery fetch failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const galleryStr = localStorage.getItem("gallery");
-    return JSON.parse(galleryStr || "[]");
-  }
+  const response = await apiRequest("/gallery");
+  return response || [];
 };
 
 export const addGalleryItem = async (itemData) => {
@@ -808,19 +793,8 @@ export const addGalleryItem = async (itemData) => {
       body: JSON.stringify(itemData),
     });
   } catch (error) {
-    console.error(
-      "MongoDB addGalleryItem failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-    const newItem = {
-      id: "gallery_" + Date.now(),
-      ...itemData,
-    };
-    gallery.unshift(newItem);
-    localStorage.setItem("gallery", JSON.stringify(gallery));
-    return newItem;
+    console.error("MongoDB addGalleryItem failed:", error);
+    throw error;
   }
 };
 
@@ -831,21 +805,8 @@ export const updateGalleryItem = async (id, itemData) => {
       body: JSON.stringify(itemData),
     });
   } catch (error) {
-    console.error(
-      "MongoDB updateGalleryItem failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-    const index = gallery.findIndex(
-      (img) => img.id.toString() === id.toString(),
-    );
-    if (index !== -1) {
-      gallery[index] = { ...gallery[index], ...itemData };
-      localStorage.setItem("gallery", JSON.stringify(gallery));
-      return gallery[index];
-    }
-    throw new Error("Gallery item not found");
+    console.error("MongoDB updateGalleryItem failed:", error);
+    throw error;
   }
 };
 
@@ -854,17 +815,8 @@ export const deleteGalleryItem = async (id) => {
     await apiRequest(`/gallery/${id}`, { method: "DELETE" });
     return true;
   } catch (error) {
-    console.error(
-      "MongoDB deleteGalleryItem failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
-    const filtered = gallery.filter(
-      (img) => img.id.toString() !== id.toString(),
-    );
-    localStorage.setItem("gallery", JSON.stringify(filtered));
-    return true;
+    console.error("MongoDB deleteGalleryItem failed:", error);
+    throw error;
   }
 };
 
@@ -936,18 +888,8 @@ export const uploadImageFile = async (file) => {
  * RESEARCH PROJECT SERVICES
  */
 export const getProjects = async () => {
-  try {
-    const response = await apiRequest("/projects");
-    return response || [];
-  } catch (error) {
-    console.error(
-      "MongoDB projects fetch failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const projectsStr = localStorage.getItem("projects");
-    return JSON.parse(projectsStr || "[]");
-  }
+  const response = await apiRequest("/projects");
+  return response || [];
 };
 
 export const addProject = async (projectData) => {
@@ -970,16 +912,8 @@ export const addProject = async (projectData) => {
       body: JSON.stringify(newProj),
     });
   } catch (error) {
-    console.error(
-      "MongoDB addProject failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const projects = JSON.parse(localStorage.getItem("projects") || "[]");
-    newProj.id = "proj_" + Date.now();
-    projects.unshift(newProj);
-    localStorage.setItem("projects", JSON.stringify(projects));
-    return newProj;
+    console.error("MongoDB addProject failed:", error);
+    throw error;
   }
 };
 
@@ -1002,19 +936,8 @@ export const updateProject = async (id, projectData) => {
       body: JSON.stringify(updatedProj),
     });
   } catch (error) {
-    console.error(
-      "MongoDB updateProject failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const projects = JSON.parse(localStorage.getItem("projects") || "[]");
-    const index = projects.findIndex((p) => p.id.toString() === id.toString());
-    if (index !== -1) {
-      projects[index] = { ...projects[index], ...updatedProj };
-      localStorage.setItem("projects", JSON.stringify(projects));
-      return projects[index];
-    }
-    throw new Error("Project not found");
+    console.error("MongoDB updateProject failed:", error);
+    throw error;
   }
 };
 
@@ -1023,14 +946,7 @@ export const deleteProject = async (id) => {
     await apiRequest(`/projects/${id}`, { method: "DELETE" });
     return true;
   } catch (error) {
-    console.error(
-      "MongoDB deleteProject failed, falling back to LocalStorage:",
-      error,
-    );
-    initLocalStorage();
-    const projects = JSON.parse(localStorage.getItem("projects") || "[]");
-    const filtered = projects.filter((p) => p.id.toString() !== id.toString());
-    localStorage.setItem("projects", JSON.stringify(filtered));
-    return true;
+    console.error("MongoDB deleteProject failed:", error);
+    throw error;
   }
 };

@@ -5,7 +5,7 @@ A modern professional portfolio website for Dr. Ariful Rahman, built with React,
 ## Live Links
 
 - Frontend: https://drariful-protfolio.netlify.app/
-- Backend API: https://drariful-adminpannel-backend-f7m3i1bt0.vercel.app
+- Backend API: https://drariful-adminpannel-backend-5uzaf7jsw.vercel.app
 
 ## Overview
 
@@ -71,13 +71,9 @@ cd server
 npm start
 ```
 
-The backend API will be available at:
+The backend API will be available at the production endpoint configured in the frontend:
 
-- http://localhost:5000/
-- http://localhost:5000/api/health
-- http://localhost:5000/api/blogs
-- http://localhost:5000/api/gallery
-- http://localhost:5000/api/projects
+- https://drariful-adminpannel-backend-5uzaf7jsw.vercel.app/api
 
 ## Environment Variables
 
@@ -86,7 +82,7 @@ The backend API will be available at:
 Create a .env file in the project root if needed:
 
 ```bash
-VITE_API_BASE_URL=https://drariful-adminpannel-backend-f7m3i1bt0.vercel.app/api
+VITE_API_BASE_URL=https://drariful-adminpannel-backend-5uzaf7jsw.vercel.app/api
 ```
 
 ### Backend
@@ -100,6 +96,8 @@ DB_CLUSTER=your_cluster_url_without_https
 DB_NAME=drariful_cms
 PORT=5000
 ```
+
+> Important: If the deployed backend returns a Vercel SSO redirect instead of JSON, the Vercel project is not publicly accessible. The frontend must point at a public backend endpoint for MongoDB-driven content to display.
 
 ## Deployment Notes
 

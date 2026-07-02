@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaCalendarAlt, FaUser, FaBookOpen } from 'react-icons/fa';
-import Nav from '../Header/Nav';
-import Footer from '../Footer/Footer';
-import { getBlogs } from '../lib/cms';
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { FaArrowLeft, FaCalendarAlt, FaUser, FaBookOpen } from "react-icons/fa";
+import Nav from "../Header/Nav";
+import Footer from "../Footer/Footer";
+import { getBlogs } from "../lib/cms";
 
 export default function BlogDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
         const blogs = await getBlogs();
-        const foundBlog = blogs.find(b => b.id.toString() === id.toString());
+        const foundBlog = blogs.find((b) => b.id.toString() === id.toString());
         if (foundBlog) {
           setBlog(foundBlog);
         } else {
@@ -23,6 +24,7 @@ export default function BlogDetail() {
         }
       } catch (error) {
         console.error("Failed to load blog detail:", error);
+        setError(error);
       } finally {
         setLoading(false);
       }
@@ -45,15 +47,48 @@ export default function BlogDetail() {
     );
   }
 
+  if (error) {
+    return (
+      <div>
+        <Nav />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+          <div className="text-center bg-white p-8 rounded-xl shadow-md max-w-md w-full">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">
+              Unable to load article
+            </h2>
+            <p className="primary-text mb-6">
+              {error.message || "The backend API is unavailable."}
+            </p>
+            <Link
+              to="/blogs"
+              className="px-6 py-2 bg-[#003878] text-white rounded-lg hover:bg-blue-800 transition-all font-semibold"
+            >
+              Back to Blogs
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   if (!blog) {
     return (
       <div>
         <Nav />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
           <div className="text-center bg-white p-8 rounded-xl shadow-md max-w-md w-full">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Article Not Found</h2>
-            <p className="primary-text mb-6">The article you are looking for might have been deleted or the link is incorrect.</p>
-            <Link to="/blogs" className="px-6 py-2 bg-[#003878] text-white rounded-lg hover:bg-blue-800 transition-all font-semibold">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">
+              Article Not Found
+            </h2>
+            <p className="primary-text mb-6">
+              The article you are looking for might have been deleted or the
+              link is incorrect.
+            </p>
+            <Link
+              to="/blogs"
+              className="px-6 py-2 bg-[#003878] text-white rounded-lg hover:bg-blue-800 transition-all font-semibold"
+            >
               Back to Blogs
             </Link>
           </div>
@@ -73,7 +108,8 @@ export default function BlogDetail() {
             to="/blogs"
             className="inline-flex items-center gap-2 text-[#003878] hover:text-blue-800 transition-colors font-semibold mb-8 group"
           >
-            <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Back to Blogs
+            <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />{" "}
+            Back to Blogs
           </Link>
 
           {/* Blog Post Card */}
@@ -88,10 +124,11 @@ export default function BlogDetail() {
               <h1 className="text-3xl md:text-5xl font-extrabold text-[#003878] mb-4 leading-tight">
                 {blog.title}
               </h1>
-              
+
               <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500 border-y border-gray-100 py-3">
                 <span className="flex items-center gap-2">
-                  <FaUser className="text-[#003878]" /> {blog.author || 'Dr. DM Ariful Rahman'}
+                  <FaUser className="text-[#003878]" />{" "}
+                  {blog.author || "Dr. DM Ariful Rahman"}
                 </span>
                 <span className="flex items-center gap-2">
                   <FaCalendarAlt className="text-[#003878]" /> {blog.date}
@@ -107,7 +144,7 @@ export default function BlogDetail() {
                   alt={blog.title}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.target.style.display = 'none';
+                    e.target.style.display = "none";
                   }}
                 />
               </div>
