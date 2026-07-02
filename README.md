@@ -5,7 +5,7 @@ A modern professional portfolio website for Dr. Ariful Rahman, built with React,
 ## Live Links
 
 - Frontend: https://drariful-protfolio.netlify.app/
-- Backend API: https://drariful-adminpannel-backend-f7m3i1bt0.vercel.app
+- Backend API: https://drariful-adminpannel-backend-5uzaf7jsw.vercel.app
 
 ## Overview
 
@@ -86,7 +86,7 @@ The backend API will be available at:
 Create a .env file in the project root if needed:
 
 ```bash
-VITE_API_BASE_URL=https://drariful-adminpannel-backend-f7m3i1bt0.vercel.app/api
+VITE_API_BASE_URL=https://drariful-adminpannel-backend-5uzaf7jsw.vercel.app/api
 ```
 
 ### Backend
