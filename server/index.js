@@ -657,12 +657,7 @@ const seedData = async () => {
 };
 
 app.get("/", (_req, res) => {
-  res.json({
-    ok: true,
-    service: "drariful-cms-api",
-    message: "Backend is running. Use the API endpoints below.",
-    endpoints: ["/api/health", "/api/blogs", "/api/gallery", "/api/projects"],
-  });
+  res.redirect(307, "/api/health");
 });
 
 app.get("/api/health", (_req, res) => {
