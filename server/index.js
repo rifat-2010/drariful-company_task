@@ -635,21 +635,21 @@ const Project = mongoose.model("Project", projectSchema, PROJECT_COLLECTION);
 const seedData = async () => {
   try {
     const blogCount = await Blog.countDocuments();
-    if (blogCount !== blogSeedData.length) {
-      await Blog.deleteMany({});
+    if (blogCount === 0) {
       await Blog.insertMany(blogSeedData);
+      console.log("Seeded blog collection with default data.");
     }
 
     const galleryCount = await GalleryItem.countDocuments();
-    if (galleryCount !== gallerySeedData.length) {
-      await GalleryItem.deleteMany({});
+    if (galleryCount === 0) {
       await GalleryItem.insertMany(gallerySeedData);
+      console.log("Seeded gallery collection with default data.");
     }
 
     const projectCount = await Project.countDocuments();
-    if (projectCount !== projectSeedData.length) {
-      await Project.deleteMany({});
+    if (projectCount === 0) {
       await Project.insertMany(projectSeedData);
+      console.log("Seeded project collection with default data.");
     }
   } catch (error) {
     console.error("Seeding failed:", error);
@@ -811,7 +811,18 @@ const initializeDatabase = async () => {
   try {
     await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 10000 });
     console.log("MongoDB connected successfully.");
-    await seedData();
+    const allowAutoSeed =
+      process.env.NODE_ENV !== "production" ||
+      process.env.AUTO_SEED === "true" ||
+      process.env.FORCE_SEED === "true";
+
+    if (allowAutoSeed) {
+      await seedData();
+    } else {
+      console.log(
+        "Auto-seeding skipped (production mode). Set AUTO_SEED=true or FORCE_SEED=true to enable seeding.",
+      );
+    }
   } catch (error) {
     console.error("MongoDB connection failed:", error.message);
   }

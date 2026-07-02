@@ -608,13 +608,42 @@ const Project = mongoose.model("Project", projectSchema, PROJECT_COLLECTION);
 (async () => {
   try {
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 10000 });
-    await Blog.deleteMany({});
-    await Blog.insertMany(blogSeedData);
-    await GalleryItem.deleteMany({});
-    await GalleryItem.insertMany(gallerySeedData);
-    await Project.deleteMany({});
-    await Project.insertMany(projectSeedData);
-    console.log("Seed data inserted successfully.");
+    const force =
+      process.env.FORCE_SEED === "true" || process.env.AUTO_SEED === "true";
+
+    if (force) {
+      await Blog.deleteMany({});
+      await Blog.insertMany(blogSeedData);
+      await GalleryItem.deleteMany({});
+      await GalleryItem.insertMany(gallerySeedData);
+      await Project.deleteMany({});
+      await Project.insertMany(projectSeedData);
+      console.log("Force seed: collections replaced with seed data.");
+    } else {
+      const blogCount = await Blog.countDocuments();
+      if (blogCount === 0) {
+        await Blog.insertMany(blogSeedData);
+        console.log("Seeded blog collection (was empty).");
+      } else {
+        console.log("Blog collection not empty — skipping seed.");
+      }
+
+      const galleryCount = await GalleryItem.countDocuments();
+      if (galleryCount === 0) {
+        await GalleryItem.insertMany(gallerySeedData);
+        console.log("Seeded gallery collection (was empty).");
+      } else {
+        console.log("Gallery collection not empty — skipping seed.");
+      }
+
+      const projectCount = await Project.countDocuments();
+      if (projectCount === 0) {
+        await Project.insertMany(projectSeedData);
+        console.log("Seeded project collection (was empty).");
+      } else {
+        console.log("Project collection not empty — skipping seed.");
+      }
+    }
     process.exit(0);
   } catch (error) {
     console.error(error);
