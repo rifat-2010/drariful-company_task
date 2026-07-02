@@ -609,7 +609,7 @@ const Project = mongoose.model("Project", projectSchema, PROJECT_COLLECTION);
   try {
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 10000 });
     const force =
-      process.env.FORCE_SEED === "true" || process.env.AUTO_SEED === "true";
+      process.argv.includes("--force") || process.env.FORCE_SEED === "true";
 
     if (force) {
       await Blog.deleteMany({});

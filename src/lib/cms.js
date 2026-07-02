@@ -28,14 +28,20 @@ const apiRequest = async (path, options = {}) => {
   const url = `${API_BASE_URL}${path}`;
   let response;
 
+  const token = localStorage.getItem("adminToken");
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   try {
     response = await fetch(url, {
       cache: "no-store",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
+      headers,
       ...options,
     });
   } catch (networkError) {
@@ -681,15 +687,22 @@ export const login = async (email, password) => {
       throw error;
     }
   } else {
-    // Local fallback check
-    if (email === "admin@drariful.com" && password === "adminpassword") {
-      const user = { email: "admin@drariful.com", uid: "mock-admin-uid" };
-      localStorage.setItem("mockUser", JSON.stringify(user));
-      // Dispatch custom event to update subscribers immediately
-      window.dispatchEvent(new Event("auth-change"));
-      return user;
-    } else {
-      throw new Error("Invalid admin credentials");
+    try {
+      const data = await apiRequest("/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+      if (data && data.token) {
+        localStorage.setItem("adminToken", data.token);
+        localStorage.setItem("mockUser", JSON.stringify(data.user));
+        // Dispatch custom event to update subscribers immediately
+        window.dispatchEvent(new Event("auth-change"));
+        return data.user;
+      }
+      throw new Error("Invalid response from server");
+    } catch (error) {
+      console.error("Backend Login Error:", error);
+      throw error;
     }
   }
 };
@@ -698,6 +711,7 @@ export const logout = async () => {
   if (isFirebaseConfigured) {
     await signOut(auth);
   } else {
+    localStorage.removeItem("adminToken");
     localStorage.removeItem("mockUser");
     window.dispatchEvent(new Event("auth-change"));
   }
@@ -873,15 +887,28 @@ export const uploadImageFile = async (file) => {
       return url;
     } catch (err) {
       console.error(
-        "Firebase Storage upload failed, falling back to Base64:",
+        "Firebase Storage upload failed, falling back to backend upload:",
         err,
       );
-      return await compressAndConvertToBase64(file);
     }
   }
 
-  // Local/Fallback mode: compress and return Base64 Data URL
-  return await compressAndConvertToBase64(file);
+  // Local/Fallback mode: compress and upload to the backend local uploads folder
+  try {
+    const base64Data = await compressAndConvertToBase64(file);
+    const result = await apiRequest("/upload", {
+      method: "POST",
+      body: JSON.stringify({ image: base64Data, name: file.name }),
+    });
+    if (result && result.url) {
+      return result.url;
+    }
+    throw new Error("Failed to retrieve image URL from backend");
+  } catch (error) {
+    console.error("Backend image upload failed:", error);
+    // Final fallback: return base64 data url so it at least saves in the UI
+    return await compressAndConvertToBase64(file);
+  }
 };
 
 /**

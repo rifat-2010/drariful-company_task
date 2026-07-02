@@ -3,12 +3,69 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const path = require("path");
+const fs = require("fs");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 dotenv.config({ path: path.join(__dirname, ".env") });
+
+const JWT_SECRET = process.env.JWT_SECRET || "drariful_cms_jwt_secret_key_2026";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@drariful.com";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "adminpassword";
+
+// Ensure uploads folder exists
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "10mb" }));
+app.use("/uploads", express.static(uploadsDir));
+
+// Middleware to ensure DB connection is ready before handling requests
+app.use(async (req, res, next) => {
+  // Skip DB check for health endpoints
+  if (req.path === "/api/health" || req.path === "/api/healt" || req.path === "/") {
+    return next();
+  }
+
+  if (mongoose.connection.readyState === 1) {
+    return next();
+  }
+  
+  if (mongoose.connection.readyState === 2) {
+    console.log("Database is connecting. Waiting for connection...");
+    try {
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error("Database connection timeout")), 5000);
+        mongoose.connection.once("connected", () => {
+          clearTimeout(timeout);
+          resolve();
+        });
+        mongoose.connection.once("error", (err) => {
+          clearTimeout(timeout);
+          reject(err);
+        });
+      });
+      return next();
+    } catch (err) {
+      return res.status(500).json({ message: "Database connection pending: " + err.message });
+    }
+  }
+
+  console.log("Database disconnected. Attempting reconnection...");
+  try {
+    await initializeDatabase();
+    if (mongoose.connection.readyState === 1) {
+      return next();
+    }
+    throw new Error("Reconnection failed");
+  } catch (err) {
+    return res.status(500).json({ message: "Database connection failed: " + err.message });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 const DB_USERNAME = process.env.DB_USERNAME;
@@ -632,7 +689,7 @@ const GalleryItem = mongoose.model(
 );
 const Project = mongoose.model("Project", projectSchema, PROJECT_COLLECTION);
 
-const seedData = async () => {
+async function seedData() {
   try {
     const blogCount = await Blog.countDocuments();
     if (blogCount === 0) {
@@ -654,7 +711,88 @@ const seedData = async () => {
   } catch (error) {
     console.error("Seeding failed:", error);
   }
+}
+
+// JWT Authentication Middleware
+const authenticateJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Access denied. No token provided." });
+  }
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: "Invalid or expired token." });
+  }
 };
+
+// Login API
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    if (email !== ADMIN_EMAIL) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    let isMatch = false;
+    if (ADMIN_PASSWORD.startsWith("$2a$") || ADMIN_PASSWORD.startsWith("$2b$")) {
+      isMatch = await bcrypt.compare(password, ADMIN_PASSWORD);
+    } else {
+      isMatch = (password === ADMIN_PASSWORD);
+    }
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "7d" });
+    res.json({ token, user: { email, uid: "admin-uid" } });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Upload API
+app.post("/api/upload", authenticateJWT, async (req, res) => {
+  try {
+    const { image, name } = req.body;
+    if (!image) {
+      return res.status(400).json({ message: "No image data provided" });
+    }
+
+    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) {
+      return res.status(400).json({ message: "Invalid base64 image data format" });
+    }
+
+    const imageType = matches[1];
+    const base64Data = matches[2];
+    const buffer = Buffer.from(base64Data, "base64");
+
+    const extension = imageType.split("/")[1] || "jpg";
+    const cleanName = (name || "upload").replace(/[^a-zA-Z0-9]/g, "_");
+    const filename = `${Date.now()}_${cleanName}.${extension}`;
+    const filePath = path.join(uploadsDir, filename);
+
+    fs.writeFileSync(filePath, buffer);
+
+    const protocol = req.protocol;
+    const host = req.get("host");
+    const fileUrl = `${protocol}://${host}/uploads/${filename}`;
+
+    res.json({ url: fileUrl });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 app.get("/", (_req, res) => {
   res.redirect(307, "/api/health");
@@ -677,7 +815,7 @@ app.get("/api/blogs", async (_req, res) => {
   }
 });
 
-app.post("/api/blogs", async (req, res) => {
+app.post("/api/blogs", authenticateJWT, async (req, res) => {
   try {
     const payload = { ...req.body };
     delete payload.id;
@@ -688,7 +826,7 @@ app.post("/api/blogs", async (req, res) => {
   }
 });
 
-app.put("/api/blogs/:id", async (req, res) => {
+app.put("/api/blogs/:id", authenticateJWT, async (req, res) => {
   try {
     const payload = { ...req.body };
     delete payload.id;
@@ -703,7 +841,7 @@ app.put("/api/blogs/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/blogs/:id", async (req, res) => {
+app.delete("/api/blogs/:id", authenticateJWT, async (req, res) => {
   try {
     const doc = await Blog.findByIdAndDelete(req.params.id);
     if (!doc) return res.status(404).json({ message: "Blog not found" });
@@ -722,7 +860,7 @@ app.get("/api/gallery", async (_req, res) => {
   }
 });
 
-app.post("/api/gallery", async (req, res) => {
+app.post("/api/gallery", authenticateJWT, async (req, res) => {
   try {
     const payload = { ...req.body };
     delete payload.id;
@@ -733,7 +871,7 @@ app.post("/api/gallery", async (req, res) => {
   }
 });
 
-app.put("/api/gallery/:id", async (req, res) => {
+app.put("/api/gallery/:id", authenticateJWT, async (req, res) => {
   try {
     const payload = { ...req.body };
     delete payload.id;
@@ -749,7 +887,7 @@ app.put("/api/gallery/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/gallery/:id", async (req, res) => {
+app.delete("/api/gallery/:id", authenticateJWT, async (req, res) => {
   try {
     const doc = await GalleryItem.findByIdAndDelete(req.params.id);
     if (!doc)
@@ -769,7 +907,7 @@ app.get("/api/projects", async (_req, res) => {
   }
 });
 
-app.post("/api/projects", async (req, res) => {
+app.post("/api/projects", authenticateJWT, async (req, res) => {
   try {
     const payload = { ...req.body };
     delete payload.id;
@@ -780,7 +918,7 @@ app.post("/api/projects", async (req, res) => {
   }
 });
 
-app.put("/api/projects/:id", async (req, res) => {
+app.put("/api/projects/:id", authenticateJWT, async (req, res) => {
   try {
     const payload = { ...req.body };
     delete payload.id;
@@ -795,7 +933,7 @@ app.put("/api/projects/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/projects/:id", async (req, res) => {
+app.delete("/api/projects/:id", authenticateJWT, async (req, res) => {
   try {
     const doc = await Project.findByIdAndDelete(req.params.id);
     if (!doc) return res.status(404).json({ message: "Project not found" });
@@ -805,14 +943,13 @@ app.delete("/api/projects/:id", async (req, res) => {
   }
 });
 
-const initializeDatabase = async () => {
+async function initializeDatabase() {
   if (mongoose.connection.readyState >= 1) return;
 
   try {
     await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 10000 });
     console.log("MongoDB connected successfully.");
     const allowAutoSeed =
-      process.env.NODE_ENV !== "production" ||
       process.env.AUTO_SEED === "true" ||
       process.env.FORCE_SEED === "true";
 
@@ -820,15 +957,15 @@ const initializeDatabase = async () => {
       await seedData();
     } else {
       console.log(
-        "Auto-seeding skipped (production mode). Set AUTO_SEED=true or FORCE_SEED=true to enable seeding.",
+        "Auto-seeding skipped. Set AUTO_SEED=true or FORCE_SEED=true to enable seeding.",
       );
     }
   } catch (error) {
     console.error("MongoDB connection failed:", error.message);
   }
-};
+}
 
-const startServer = async () => {
+async function startServer() {
   try {
     await initializeDatabase();
     app.listen(PORT, () => {
@@ -837,7 +974,7 @@ const startServer = async () => {
   } catch (error) {
     console.error("Failed to start local server:", error.message);
   }
-};
+}
 
 app.use((req, res) => {
   res.status(404).json({

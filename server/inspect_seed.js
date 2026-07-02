@@ -1,0 +1,10 @@
+const fs = require('fs');
+const p = fs.readFileSync('seed.js', 'utf8');
+const blogMatches = [...p.matchAll(/\{\s*title:\s*"([^"]+)"/g)];
+const galleryMatches = [...p.matchAll(/\{\s*src:\s*"([^"]+)"/g)];
+console.log('blog seed count', blogMatches.length);
+console.log('gallery seed count', galleryMatches.length);
+console.log('first 10 blog titles:');
+blogMatches.slice(0,10).forEach((m,i)=>console.log(i+1, m[1]));
+console.log('first 10 gallery srcs:');
+galleryMatches.slice(0,10).forEach((m,i)=>console.log(i+1, m[1]));

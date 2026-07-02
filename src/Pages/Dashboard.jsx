@@ -521,13 +521,13 @@ export default function Dashboard() {
                               <strong>Configured Mode:</strong>{" "}
                               {isFirebaseConfigured
                                 ? "Production Firebase Client (Firestore)"
-                                : "LocalStorage Fallback Client"}
+                                : "Production MongoDB Atlas Client"}
                             </p>
                             <p>
                               <strong>Database Source:</strong>{" "}
                               {isFirebaseConfigured
                                 ? "Firestore database instances"
-                                : "Browser HTML5 LocalStorage"}
+                                : "MongoDB Atlas (via Express API)"}
                             </p>
                             <p>
                               <strong>Authorized Admin Account:</strong>{" "}
