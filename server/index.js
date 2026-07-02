@@ -76,11 +76,16 @@ const BLOG_COLLECTION = process.env.BLOG_COLLECTION || "blogs";
 const GALLERY_COLLECTION = process.env.GALLERY_COLLECTION || "gallery";
 const PROJECT_COLLECTION = process.env.PROJECT_COLLECTION || "projects";
 
-if (!DB_USERNAME || !DB_PASSWORD || !DB_CLUSTER) {
-  console.error("MongoDB credentials missing. Please check server/.env");
-}
+// Support a single MONGO_URI env variable (common in Vercel/cloud), or build from components
+const mongoUri = process.env.MONGO_URI || (
+  DB_USERNAME && DB_PASSWORD && DB_CLUSTER
+    ? `mongodb+srv://${encodeURIComponent(DB_USERNAME)}:${encodeURIComponent(DB_PASSWORD)}@${DB_CLUSTER}/${DB_NAME}?retryWrites=true&w=majority`
+    : null
+);
 
-const mongoUri = `mongodb+srv://${encodeURIComponent(DB_USERNAME || "")}:${encodeURIComponent(DB_PASSWORD || "")}@${DB_CLUSTER}/${DB_NAME}?retryWrites=true&w=majority`;
+if (!mongoUri) {
+  console.error("MongoDB credentials missing. Set MONGO_URI or DB_USERNAME/DB_PASSWORD/DB_CLUSTER in server/.env");
+}
 
 const toPublicDoc = (doc) => {
   if (!doc) return null;
