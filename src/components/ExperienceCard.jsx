@@ -57,7 +57,7 @@ export function ExperienceCard({ experience }) {
                     Responsibilities:
                   </h4>
                   <ul className="space-y-2 primary-text">
-                    {experience.responsibilities.map((item) => (
+                    {experience.responsibilities && experience.responsibilities.map((item) => (
                       <li key={`resp-${item}`} className="flex items-start">
                         <span className="mr-2 mt-1 primary-text">•</span>
                         <span>{item}</span>
@@ -67,7 +67,7 @@ export function ExperienceCard({ experience }) {
 
                   <h4 className="mb-3 mt-6 font-medium heading">Highlights:</h4>
                   <ul className="space-y-2 primary-text">
-                    {experience.highlights.map((item) => (
+                    {experience.highlights && experience.highlights.map((item) => (
                       <li key={`high-${item}`} className="flex items-start">
                         <span className="mr-2 mt-1 primary-text">•</span>
                         <span>{item}</span>
@@ -77,7 +77,7 @@ export function ExperienceCard({ experience }) {
                 </div>
 
                 <div className="flex items-start justify-center lg:justify-end">
-                  <ImageGallery images={experience.images} />
+                  {experience.images && <ImageGallery images={experience.images} />}
                 </div>
               </div>
             </CardContent>

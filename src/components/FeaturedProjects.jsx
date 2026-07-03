@@ -41,7 +41,7 @@ const FeaturedProjects = () => {
             <h4 className="text-blue-700 font-black text-[10px] uppercase tracking-[0.4em] mb-4">Latest Research</h4>
             <h2 className="text-4xl font-black text-gray-900 tracking-tighter">Featured Projects</h2>
           </div>
-          <Link to="/publications" className="hidden md:flex items-center gap-2 text-blue-900 font-black text-xs uppercase tracking-widest group">
+          <Link to="/blogs" className="hidden md:flex items-center gap-2 text-blue-900 font-black text-xs uppercase tracking-widest group">
             All Publications <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
           </Link>
         </div>
@@ -71,7 +71,7 @@ const FeaturedProjects = () => {
                 {project.summary}
               </p>
               
-              <Link to="/publications" className="mt-auto inline-flex items-center gap-2 text-blue-900 font-black text-[10px] uppercase tracking-widest border-b-2 border-blue-900 w-fit pb-1 group-hover:gap-4 transition-all">
+              <Link to="/blogs" className="mt-auto inline-flex items-center gap-2 text-blue-900 font-black text-[10px] uppercase tracking-widest border-b-2 border-blue-900 w-fit pb-1 group-hover:gap-4 transition-all">
                 Learn More <ArrowRight className="w-3 h-3" />
               </Link>
             </div>

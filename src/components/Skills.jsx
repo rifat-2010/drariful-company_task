@@ -13,7 +13,22 @@ import {
   FaTools,
   FaBriefcaseMedical
 } from 'react-icons/fa';
-import { skills } from '../data/projects';
+const skills = [
+  { name: 'Clinical cytology', category: 'technical' },
+  { name: 'Histopathology', category: 'technical' },
+  { name: 'Molecular Pathology', category: 'technical' },
+  { name: 'Medical Education', category: 'technical' },
+  { name: 'Precision Cancer Mediciney', category: 'technical' },
+  { name: 'Molecular Diagnostic', category: 'technical' },
+  { name: 'LIMS', category: 'tools-communication' },
+  { name: 'QMS', category: 'tools-communication' },
+  { name: 'SPSS', category: 'tools-communication' },
+  { name: 'Canva', category: 'tools-communication' },
+  { name: 'MS Office', category: 'tools-communication' },
+  { name: 'Medical Presentation', category: 'tools-communication' },
+  { name: 'Content Creation', category: 'tools-communication' },
+  { name: 'Academic Administration', category: 'tools-communication' },
+];
 import { BiSolidClinic } from 'react-icons/bi';
 import { GiDna2, GiMedicines } from 'react-icons/gi';
 

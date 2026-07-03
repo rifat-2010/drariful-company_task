@@ -90,7 +90,7 @@ const Blogs = () => {
                   
                   <div className="mt-auto">
                     <Link 
-                      to={`/blog/${blog.id}`} 
+                      to={`/blogs/${blog.id}`} 
                       className="inline-flex items-center gap-2 text-blue-900 font-black text-xs uppercase tracking-widest group-hover:gap-4 transition-all"
                     >
                       Read Full Analysis <span className="text-lg">→</span>

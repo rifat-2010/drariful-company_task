@@ -11,20 +11,20 @@ export function ExperienceTabs({ categories }) {
       onValueChange={setActiveTab}
       className="w-full"
     >
-      <div className=" z-10 bg-white pb-2 pt-1 shadow-sm">
-        <TabsList className="h-auto w-full justify-start overflow-x-auto whitespace-nowrap rounded-none border-b p-0 md:flex">
-          {categories.map((category) => (
-            <TabsTrigger
-              key={category.id}
-              value={category.id}
-              className="tab-trigger flex-shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-medium text-white data-[state=active]:border-[#0066CB] data-[state=active]:text-[#0066CB]"
-            >
-              {category.title}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </div>
+      {/* Tab List with Gradient Background - MATCHING 1ST IMAGE */}
+      <TabsList className="h-auto w-full justify-start overflow-x-auto whitespace-nowrap rounded-none border-0 p-0 md:flex">
+        {categories.map((category) => (
+          <TabsTrigger
+            key={category.id}
+            value={category.id}
+            className="tab-trigger flex-shrink-0 rounded-none border-b-0 px-6 py-4 text-sm font-semibold text-white data-[state=active]:bg-white data-[state=active]:text-slate-950 transition-all"
+          >
+            {category.title}
+          </TabsTrigger>
+        ))}
+      </TabsList>
 
+      {/* Tab Content */}
       {categories.map((category) => (
         <TabsContent
           key={category.id}
@@ -32,7 +32,7 @@ export function ExperienceTabs({ categories }) {
           className="mt-6 focus:outline-none"
         >
           <div className="space-y-4">
-            {category.experiences.map((experience) => (
+            {category.experiences && category.experiences.map((experience) => (
               <ExperienceCard key={experience.id} experience={experience} />
             ))}
           </div>
@@ -41,3 +41,5 @@ export function ExperienceTabs({ categories }) {
     </Tabs>
   );
 }
+
+export default ExperienceTabs;

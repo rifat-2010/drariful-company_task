@@ -78,7 +78,8 @@ const Dashboard = () => {
 
   const openModal = (item = null) => {
     setEditingItem(item);
-    setFormData(item || {});
+    // Initialize with empty object with all possible fields
+    setFormData(item || { src: '', caption: '', alt: '' });
     setIsModalOpen(true);
   };
 
@@ -91,6 +92,13 @@ const Dashboard = () => {
   // --- CRUD OPERATIONS (THE HEART) ---
   const handleSave = async (e) => {
     e.preventDefault();
+    
+    // Validation for gallery - src is required
+    if (activeTab === "gallery" && !formData.src) {
+      alert("⚠️ Please upload an image first!");
+      return;
+    }
+
     try {
       setActionLoading(true);
       let savedItem;
@@ -218,9 +226,9 @@ const Dashboard = () => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             {activeTab === "gallery" ? (
               <div className="p-6 grid grid-cols-4 gap-4">
-                {gallery.map(item => (
+                {gallery.filter(item => item && item.src).map(item => (
                   <div key={item.id} className="group relative aspect-square rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-                    <img src={item.src} className="w-full h-full object-cover" alt="" />
+                    <img src={item.src} className="w-full h-full object-cover" alt={item.alt || ""} />
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                       <button onClick={() => handleDelete(item.id)} className="p-3 bg-red-600 text-white rounded-full hover:bg-red-500 transition-transform hover:scale-110">
                         <Trash2 className="w-5 h-5" />

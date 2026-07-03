@@ -4,9 +4,14 @@ import { experienceData } from "../data/experience-data";
 
 export function ExperienceSection() {
   return (
-    <section className="mt-8 lg:mt-16">
+    <section className="py-8 lg:py-16 bg-white">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 className="mb-5 md:mb-12 text-center text-2xl md:text-3xl font-bold heading sm:text-4xl primary-text">Professional Experience</h2>
+        {/* Title Section - MATCHING 1ST IMAGE */}
+        <div className="mb-12 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-8">Professional Experience</h2>
+        </div>
+        
+        {/* Tabs and Content */}
         <ExperienceTabs categories={experienceData} />
       </div>
     </section>

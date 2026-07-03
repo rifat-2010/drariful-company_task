@@ -9,11 +9,12 @@ import React, { useState, useEffect } from "react";
 import { getGallery } from "../lib/cms";
 import Nav from "../Header/Nav";
 import Footer from "../Footer/Footer";
-import { Loader2, ImageIcon } from "lucide-react";
+import { Loader2, ImageIcon, X } from "lucide-react";
 
 const GalleryPage = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -53,25 +54,69 @@ const GalleryPage = () => {
             <p className="text-gray-400 font-black text-[10px] uppercase tracking-[0.3em]">Processing Visuals...</p>
           </div>
         ) : items.length > 0 ? (
-          <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6">
-            {items.map((item) => (
-              <div key={item.id} className="break-inside-avoid group relative rounded-3xl overflow-hidden bg-gray-50 shadow-sm border border-gray-50 transition-all duration-500 hover:shadow-2xl">
-                <img
-                  src={item.src}
-                  alt={item.alt || "Clinical Experience"}
-                  className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
-                  loading="lazy"
-                />
-                {item.caption && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-950/90 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 flex flex-col justify-end p-6">
-                    <p className="text-xs font-bold text-white leading-relaxed tracking-wide">
-                      {item.caption}
-                    </p>
-                  </div>
-                )}
+          <>
+            <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => setSelectedItem(item)}
+                  className="break-inside-avoid group relative rounded-3xl overflow-hidden bg-gray-50 shadow-sm border border-gray-50 transition-all duration-500 hover:shadow-2xl cursor-pointer"
+                >
+                  <img
+                    src={item.src}
+                    alt={item.alt || "Clinical Experience"}
+                    className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  {item.caption && (
+                    <div className="bg-blue-50 px-4 py-3 border-t border-blue-200">
+                      <p className="text-xs font-semibold text-blue-700 leading-relaxed">
+                        {item.caption}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Modal Popup */}
+            {selectedItem && (
+              <div
+                className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+                onClick={() => setSelectedItem(null)}
+              >
+                <div
+                  className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-auto relative"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Close Button */}
+                  <button
+                    onClick={() => setSelectedItem(null)}
+                    className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors"
+                  >
+                    <X className="w-6 h-6 text-gray-900" />
+                  </button>
+
+                  {/* Image */}
+                  <img
+                    src={selectedItem.src}
+                    alt={selectedItem.alt || "Clinical Experience"}
+                    className="w-full h-auto object-cover"
+                  />
+
+                  {/* Caption */}
+                  {selectedItem.caption && (
+                    <div className="p-8 bg-gradient-to-r from-blue-50 to-blue-100 border-t border-blue-200">
+                      <h3 className="text-lg font-black text-blue-900 mb-3">Caption</h3>
+                      <p className="text-blue-800 font-medium leading-relaxed">
+                        {selectedItem.caption}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-32">
             <div className="bg-blue-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8">
