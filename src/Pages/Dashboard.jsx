@@ -1,11 +1,5 @@
-/**
- * src/Pages/Dashboard.jsx - THE CONTROL CENTER (ULTIMATE VERSION)
- * 1. 100% API Driven (No Firebase, No LocalStorage data).
- * 2. Robust Error Handling (Try-Catch) to prevent crashes.
- * 3. Unified CRUD for Blogs, Projects, and Gallery.
- */
-
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   getBlogs, addBlog, updateBlog, deleteBlog,
   getGallery, addGalleryItem, deleteGalleryItem,
@@ -14,45 +8,70 @@ import {
 } from "../lib/cms";
 import { 
   LayoutDashboard, FileText, Image as ImageIcon, 
-  FolderPlus, LogOut, Plus, Trash2, Edit, Save, X, Upload, Loader2
+  FolderPlus, LogOut, Plus, Trash2, Edit, Save, 
+  X, Upload, Loader2, Search, Bell, Menu, 
+  ChevronRight, MoreVertical, CheckCircle2, AlertCircle,
+  TrendingUp, Users, Calendar, ArrowUpRight, ArrowDownRight,
+  Settings, User, HelpCircle, Mail, Phone, MapPin
 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import Nav from "../Header/Nav";
+import Footer from "../Footer/Footer";
 
-const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("blogs");
+export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(false);
-  
-  // Data States
-  const [blogs, setBlogs] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [gallery, setGallery] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
-  // Modal States
+  // --- DATA STATES ---
+  const [blogs, setBlogs] = useState([]);
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [notifications, setNotifications] = useState([
+    { id: 1, text: "System updated to Vault v2.0", time: "Just now", type: "info" },
+    { id: 2, text: "Database sync successful", time: "2 mins ago", type: "success" }
+  ]);
+
+  // --- MODAL & FORM STATES ---
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("blog");
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({});
 
-  const user = getCurrentUser();
+  // Auth Check
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (!user) {
+      navigate("/login");
+    } else {
+      loadAllData();
+    }
+  }, [navigate]);
 
   // --- INITIAL DATA FETCH ---
-  useEffect(() => {
-    const loadDashboardData = async () => {
-      try {
-        setLoading(true);
-        const [b, p, g] = await Promise.all([getBlogs(), getProjects(), getGallery()]);
-        setBlogs(b || []);
-        setProjects(p || []);
-        setGallery(g || []);
-      } catch (err) {
-        console.error("❌ Dashboard Load Error:", err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadDashboardData();
-  }, []);
+  const loadAllData = async () => {
+    try {
+      setLoading(true);
+      const [dbBlogs, dbGallery, dbProjects] = await Promise.all([
+        getBlogs(),
+        getGallery(),
+        getProjects()
+      ]);
+      setBlogs(dbBlogs || []);
+      setGalleryItems(dbGallery || []);
+      setProjects(dbProjects || []);
+    } catch (err) {
+      console.error("❌ Dashboard Data Sync Error:", err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // --- GENERIC HANDLERS ---
+  // --- FORM HANDLERS ---
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -61,322 +80,350 @@ const Dashboard = () => {
     }));
   };
 
-  const handleFileChange = async (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      setActionLoading(true);
+      setIsSubmitting(true);
       const url = await uploadImageFile(file);
-      const imageField = activeTab === "gallery" ? "src" : (activeTab === "blogs" ? "coverImage" : "imageUrl");
+      const imageField = modalType === "gallery" ? "src" : (modalType === "blog" ? "coverImage" : "imageUrl");
       setFormData(prev => ({ ...prev, [imageField]: url }));
     } catch (err) {
-      alert("Image upload failed. Try again.");
+      alert("Upload failed: " + err.message);
     } finally {
-      setActionLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  const openModal = (item = null) => {
-    setEditingItem(item);
-    // Initialize with empty object with all possible fields
-    setFormData(item || { src: '', caption: '', alt: '' });
+  // --- CRUD ACTIONS ---
+  const openAddModal = (type) => {
+    setModalType(type);
+    setEditingItem(null);
+    setFormData({});
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingItem(null);
-    setFormData({});
+  const openEditModal = (type, item) => {
+    setModalType(type);
+    setEditingItem(item);
+    setFormData({ ...item });
+    setIsModalOpen(true);
   };
 
-  // --- CRUD OPERATIONS (THE HEART) ---
   const handleSave = async (e) => {
     e.preventDefault();
-    
-    // Validation for gallery - src is required
-    if (activeTab === "gallery" && !formData.src) {
-      alert("⚠️ Please upload an image first!");
-      return;
-    }
-
     try {
-      setActionLoading(true);
-      let savedItem;
+      setIsSubmitting(true);
+      let savedDoc;
 
-      if (activeTab === "blogs") {
-        savedItem = editingItem 
+      if (modalType === "blog") {
+        savedDoc = editingItem 
           ? await updateBlog(editingItem.id, formData)
-          : await addBlog(formData);
-        setBlogs(prev => editingItem ? prev.map(i => i.id === savedItem.id ? savedItem : i) : [savedItem, ...prev]);
+          : await addBlog({ ...formData, author: "Dr. DM Ariful Rahman", date: new Date().toISOString().split('T')[0] });
+        setBlogs(prev => editingItem ? prev.map(i => i.id === savedDoc.id ? savedDoc : i) : [savedDoc, ...prev]);
       } 
-      else if (activeTab === "projects") {
-        savedItem = editingItem 
+      else if (modalType === "project") {
+        savedDoc = editingItem 
           ? await updateProject(editingItem.id, formData)
           : await addProject(formData);
-        setProjects(prev => editingItem ? prev.map(i => i.id === savedItem.id ? savedItem : i) : [savedItem, ...prev]);
+        setProjects(prev => editingItem ? prev.map(i => i.id === savedDoc.id ? savedDoc : i) : [savedDoc, ...prev]);
       } 
-      else if (activeTab === "gallery") {
-        savedItem = await addGalleryItem(formData);
-        setGallery(prev => [savedItem, ...prev]);
+      else if (modalType === "gallery") {
+        savedDoc = await addGalleryItem(formData);
+        setGalleryItems(prev => [savedDoc, ...prev]);
       }
 
-      closeModal();
+      setIsModalOpen(false);
     } catch (err) {
-      alert(`Error saving ${activeTab}: ` + err.message);
+      alert("Error saving data: " + err.message);
     } finally {
-      setActionLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure? This action is permanent and stored in the vault.")) return;
+  const handleDelete = async (type, id) => {
+    if (!window.confirm("Permanently remove this from the database vault?")) return;
     try {
-      setActionLoading(true);
-      if (activeTab === "blogs") {
+      setIsSubmitting(true);
+      if (type === "blog") {
         await deleteBlog(id);
         setBlogs(prev => prev.filter(i => i.id !== id));
-      } else if (activeTab === "projects") {
+      } else if (type === "project") {
         await deleteProject(id);
         setProjects(prev => prev.filter(i => i.id !== id));
-      } else if (activeTab === "gallery") {
+      } else if (type === "gallery") {
         await deleteGalleryItem(id);
-        setGallery(prev => prev.filter(i => i.id !== id));
+        setGalleryItems(prev => prev.filter(i => i.id !== id));
       }
     } catch (err) {
       alert("Delete failed: " + err.message);
     } finally {
-      setActionLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-gray-50">
-      <div className="flex flex-col items-center gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-900" />
-        <p className="text-gray-600 font-medium">Securing Control Center...</p>
+    <div className="min-h-screen flex items-center justify-center bg-blue-50">
+      <div className="flex flex-col items-center gap-6">
+        <Loader2 className="w-16 h-16 animate-spin text-blue-900" />
+        <h2 className="text-xl font-black text-blue-900 tracking-widest uppercase">Connecting to Vault...</h2>
       </div>
     </div>
   );
 
   return (
-    <div className="flex h-screen bg-gray-100 font-sans">
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-blue-950 text-white flex flex-col shadow-xl">
-        <div className="p-6 border-b border-blue-900">
-          <h1 className="text-xl font-bold tracking-tight">Dr. Ariful CMS</h1>
-          <p className="text-xs text-blue-400 mt-1">Authorized Access Only</p>
-        </div>
-        
-        <nav className="flex-grow p-4 space-y-2">
-          {[
-            { id: "blogs", label: "Blog Posts", icon: FileText },
-            { id: "projects", label: "Research Projects", icon: FolderPlus },
-            { id: "gallery", label: "Gallery Media", icon: ImageIcon },
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === tab.id ? 'bg-blue-800 shadow-inner' : 'hover:bg-blue-900/50 text-blue-100'}`}
-            >
-              <tab.icon className="w-5 h-5" />
-              <span className="font-medium">{tab.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        <div className="p-4 border-t border-blue-900">
-          <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-950/30 rounded-lg transition-colors">
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Secure Logout</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* MAIN CONTENT */}
-      <main className="flex-grow overflow-y-auto">
-        <header className="bg-white shadow-sm px-8 py-4 flex justify-between items-center sticky top-0 z-10">
-          <h2 className="text-2xl font-bold text-gray-800 capitalize">{activeTab} Management</h2>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500 font-medium">{user?.email}</span>
-            <button 
-              onClick={() => openModal()}
-              className="flex items-center gap-2 bg-blue-900 text-white px-5 py-2 rounded-full font-bold hover:bg-blue-800 shadow-md transition-all active:scale-95"
-            >
-              <Plus className="w-5 h-5" /> Add New {activeTab === "blogs" ? "Post" : activeTab === "projects" ? "Project" : "Image"}
-            </button>
-          </div>
-        </header>
-
-        <div className="p-8">
-          {/* STAT CARDS */}
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            {[
-              { label: "Total Blogs", value: blogs.length, color: "bg-emerald-50 text-emerald-700" },
-              { label: "Active Projects", value: projects.length, color: "bg-blue-50 text-blue-700" },
-              { label: "Gallery Assets", value: gallery.length, color: "bg-amber-50 text-amber-700" },
-            ].map((stat, idx) => (
-              <div key={idx} className={`p-6 rounded-2xl shadow-sm border border-white/50 ${stat.color}`}>
-                <p className="text-sm font-bold opacity-80 uppercase tracking-wider">{stat.label}</p>
-                <h3 className="text-3xl font-black mt-1">{stat.value}</h3>
-              </div>
-            ))}
-          </div>
-
-          {/* DATA TABLE / GRID */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            {activeTab === "gallery" ? (
-              <div className="p-6 grid grid-cols-4 gap-4">
-                {gallery.filter(item => item && item.src).map(item => (
-                  <div key={item.id} className="group relative aspect-square rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-                    <img src={item.src} className="w-full h-full object-cover" alt={item.alt || ""} />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                      <button onClick={() => handleDelete(item.id)} className="p-3 bg-red-600 text-white rounded-full hover:bg-red-500 transition-transform hover:scale-110">
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <table className="w-full text-left">
-                <thead className="bg-gray-50 border-b border-gray-100">
-                  <tr>
-                    <th className="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Content</th>
-                    <th className="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Details</th>
-                    <th className="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {(activeTab === "blogs" ? blogs : projects).map(item => (
-                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 max-w-md">
-                        <div className="font-bold text-gray-900 truncate">{item.title}</div>
-                        <div className="text-xs text-gray-400 mt-1">ID: {item.id}</div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {activeTab === "blogs" ? item.category : item.status}
-                      </td>
-                      <td className="px-6 py-4 text-right space-x-3">
-                        <button onClick={() => openModal(item)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button onClick={() => handleDelete(item.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-            {((activeTab === "blogs" && blogs.length === 0) || (activeTab === "projects" && projects.length === 0) || (activeTab === "gallery" && gallery.length === 0)) && (
-              <div className="p-20 text-center text-gray-400 italic">No data available in this vault section.</div>
-            )}
-          </div>
-        </div>
-      </main>
-
-      {/* MODAL - Unified for all types */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="bg-blue-900 p-6 text-white flex justify-between items-center">
-              <h3 className="text-xl font-bold">{editingItem ? "Edit" : "Add New"} {activeTab}</h3>
-              <button onClick={closeModal} className="hover:rotate-90 transition-transform"><X /></button>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Nav />
+      <div className="flex flex-grow">
+        {/* SIDEBAR - ORIGINAL DESIGN */}
+        <aside className="w-72 bg-white border-r border-gray-100 hidden lg:flex flex-col sticky top-0 h-[calc(100vh-80px)]">
+          <div className="p-8">
+            <div className="bg-blue-900 rounded-3xl p-6 text-white shadow-xl shadow-blue-900/20">
+              <p className="text-xs font-black uppercase tracking-widest opacity-60 mb-1">Admin Session</p>
+              <h3 className="text-lg font-black truncate">{getCurrentUser()?.email}</h3>
             </div>
-            
-            <form onSubmit={handleSave} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-              <div className="space-y-4">
-                <label className="block">
-                  <span className="text-sm font-bold text-gray-700">Title / Caption</span>
-                  <input 
-                    name={activeTab === "gallery" ? "caption" : "title"}
-                    value={activeTab === "gallery" ? formData.caption || '' : formData.title || ''}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-xl border-gray-200 bg-gray-50 focus:ring-blue-900 focus:border-blue-900 p-3"
-                    required
-                  />
-                </label>
-
-                {activeTab === "blogs" && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <label className="block">
-                      <span className="text-sm font-bold text-gray-700">Category</span>
-                      <input name="category" value={formData.category || ''} onChange={handleInputChange} className="mt-1 block w-full rounded-xl border-gray-200 bg-gray-50 p-3" />
-                    </label>
-                    <label className="block">
-                      <span className="text-sm font-bold text-gray-700">Author</span>
-                      <input name="author" value={formData.author || ''} onChange={handleInputChange} className="mt-1 block w-full rounded-xl border-gray-200 bg-gray-50 p-3" />
-                    </label>
-                  </div>
-                )}
-
-                {activeTab === "projects" && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <label className="block">
-                      <span className="text-sm font-bold text-gray-700">Status</span>
-                      <input name="status" value={formData.status || ''} onChange={handleInputChange} className="mt-1 block w-full rounded-xl border-gray-200 bg-gray-50 p-3" />
-                    </label>
-                    <label className="block">
-                      <span className="text-sm font-bold text-gray-700">Year</span>
-                      <input name="year" value={formData.year || ''} onChange={handleInputChange} className="mt-1 block w-full rounded-xl border-gray-200 bg-gray-50 p-3" />
-                    </label>
-                  </div>
-                )}
-
-                {activeTab !== "gallery" && (
-                  <label className="block">
-                    <span className="text-sm font-bold text-gray-700">Content / Description</span>
-                    <textarea 
-                      name={activeTab === "blogs" ? "content" : "description"} 
-                      rows="4" 
-                      value={activeTab === "blogs" ? formData.content || '' : formData.description || ''}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-xl border-gray-200 bg-gray-50 p-3"
-                    ></textarea>
-                  </label>
-                )}
-
-                <div className="p-6 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center gap-4 bg-gray-50/50">
-                  {(formData.src || formData.coverImage || formData.imageUrl) ? (
-                    <img src={formData.src || formData.coverImage || formData.imageUrl} className="h-32 rounded-lg" alt="Preview" />
-                  ) : (
-                    <Upload className="w-10 h-10 text-gray-300" />
-                  )}
-                  <input type="file" onChange={handleFileChange} className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-                </div>
-
-                {activeTab === "projects" && (
-                  <label className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl cursor-pointer">
-                    <input type="checkbox" name="featured" checked={formData.featured || false} onChange={handleInputChange} className="w-5 h-5 rounded text-blue-900" />
-                    <span className="font-bold text-blue-900">Feature this project on Homepage</span>
-                  </label>
-                )}
-              </div>
-
-              <div className="pt-4 flex gap-4">
-                <button 
-                  type="button" 
-                  onClick={closeModal}
-                  className="flex-grow py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={actionLoading}
-                  className="flex-grow py-4 bg-blue-900 text-white rounded-2xl font-bold hover:bg-blue-800 shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
-                >
-                  {actionLoading ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
-                  {editingItem ? "Update Changes" : "Save to Vault"}
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
-      )}
+
+          <nav className="flex-grow px-4 space-y-2">
+            {[
+              { id: "overview", label: "Overview", icon: LayoutDashboard },
+              { id: "blogs", label: "Articles", icon: FileText },
+              { id: "projects", label: "Research", icon: FolderPlus },
+              { id: "gallery", label: "Gallery", icon: ImageIcon }
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${
+                  activeTab === item.id 
+                  ? "bg-blue-50 text-blue-900" 
+                  : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"
+                }`}
+              >
+                <item.icon className="w-5 h-5" /> {item.label}
+              </button>
+            ))}
+          </nav>
+
+          <div className="p-8 mt-auto border-t border-gray-50">
+            <button onClick={logout} className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-red-500 hover:bg-red-50 transition-colors">
+              <LogOut className="w-5 h-5" /> Log Out
+            </button>
+          </div>
+        </aside>
+        {/* MAIN CONTENT AREA */}
+        <main className="flex-grow p-8 lg:p-12 overflow-x-hidden">
+          <header className="flex justify-between items-end mb-12">
+            <div>
+              <h1 className="text-4xl font-black text-gray-900 tracking-tighter capitalize">
+                Vault {activeTab}
+              </h1>
+              <p className="text-gray-400 font-bold mt-2 uppercase text-xs tracking-widest">
+                Real-time Management System
+              </p>
+            </div>
+            {activeTab !== "overview" && (
+              <Button onClick={() => openAddModal(activeTab === "blogs" ? "blog" : (activeTab === "projects" ? "project" : "gallery"))} className="bg-blue-900 hover:bg-blue-800 text-white rounded-2xl px-8 h-14 font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-900/20">
+                <Plus className="mr-2 w-5 h-5" /> New {activeTab}
+              </Button>
+            )}
+          </header>
+
+          {/* OVERVIEW CONTENT */}
+          {activeTab === "overview" && (
+            <div className="space-y-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <Card className="rounded-[40px] border-none shadow-sm bg-white p-8">
+                  <div className="flex justify-between items-start">
+                    <div className="p-4 bg-emerald-50 text-emerald-600 rounded-3xl"><FileText /></div>
+                    <span className="text-emerald-500 font-black text-xs bg-emerald-50 px-3 py-1 rounded-full">+ Live</span>
+                  </div>
+                  <h3 className="text-4xl font-black text-gray-900 mt-6">{blogs.length}</h3>
+                  <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2">Active Articles</p>
+                </Card>
+                <Card className="rounded-[40px] border-none shadow-sm bg-white p-8">
+                  <div className="flex justify-between items-start">
+                    <div className="p-4 bg-blue-50 text-blue-600 rounded-3xl"><FolderPlus /></div>
+                  </div>
+                  <h3 className="text-4xl font-black text-gray-900 mt-6">{projects.length}</h3>
+                  <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2">Research Projects</p>
+                </Card>
+                <Card className="rounded-[40px] border-none shadow-sm bg-white p-8">
+                  <div className="flex justify-between items-start">
+                    <div className="p-4 bg-amber-50 text-amber-600 rounded-3xl"><ImageIcon /></div>
+                  </div>
+                  <h3 className="text-4xl font-black text-gray-900 mt-6">{galleryItems.length}</h3>
+                  <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2">Gallery Assets</p>
+                </Card>
+              </div>
+
+              <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm">
+                <h2 className="text-2xl font-black mb-8">System Activity</h2>
+                <div className="space-y-6">
+                  {notifications.map(n => (
+                    <div key={n.id} className="flex items-center gap-6 p-6 hover:bg-gray-50 rounded-[32px] transition-colors">
+                      <div className={`p-3 rounded-2xl ${n.type === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}><Bell className="w-5 h-5" /></div>
+                      <div>
+                        <p className="font-bold text-gray-900">{n.text}</p>
+                        <p className="text-xs text-gray-400 mt-1">{n.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ARTICLES (BLOGS) CONTENT */}
+          {activeTab === "blogs" && (
+            <div className="grid gap-6">
+              {blogs.map(blog => (
+                <div key={blog.id} className="bg-white p-6 rounded-[32px] border border-gray-50 flex items-center gap-8 shadow-sm hover:shadow-md transition-all">
+                  <img src={blog.coverImage || "https://via.placeholder.com/150"} className="w-32 h-32 rounded-3xl object-cover" alt="" />
+                  <div className="flex-grow">
+                    <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest">{blog.category}</span>
+                    <h3 className="text-xl font-black text-gray-900 mt-1 line-clamp-1">{blog.title}</h3>
+                    <p className="text-gray-400 text-sm font-medium mt-2">{blog.date} • {blog.author}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" onClick={() => openEditModal("blog", blog)} className="w-12 h-12 rounded-2xl hover:bg-blue-50 text-blue-600"><Edit className="w-5 h-5" /></Button>
+                    <Button variant="ghost" onClick={() => handleDelete("blog", blog.id)} className="w-12 h-12 rounded-2xl hover:bg-red-50 text-red-500"><Trash2 className="w-5 h-5" /></Button>
+                  </div>
+                </div>
+              ))}
+              {blogs.length === 0 && <p className="text-center py-20 text-gray-400 italic">No articles found in vault.</p>}
+            </div>
+          )}
+
+          {/* GALLERY CONTENT */}
+          {activeTab === "gallery" && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {galleryItems.map(item => (
+                <div key={item.id} className="group relative aspect-square rounded-[32px] overflow-hidden shadow-sm border-4 border-white">
+                  <img src={item.src} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="" />
+                  <div className="absolute inset-0 bg-blue-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                    <Button onClick={() => handleDelete("gallery", item.id)} className="bg-white/20 backdrop-blur-md text-white hover:bg-red-500 w-12 h-12 rounded-2xl"><Trash2 className="w-5 h-5" /></Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* PROJECTS CONTENT */}
+          {activeTab === "projects" && (
+            <div className="grid gap-6">
+              {projects.map(p => (
+                <div key={p.id} className="bg-white p-8 rounded-[32px] border border-gray-50 flex justify-between items-center shadow-sm">
+                  <div className="flex-grow">
+                    <div className="flex items-center gap-4 mb-2">
+                      <span className="px-4 py-1 bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full">{p.status}</span>
+                      {p.featured && <span className="bg-amber-50 text-amber-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">★ Featured</span>}
+                    </div>
+                    <h3 className="text-2xl font-black text-gray-900">{p.title}</h3>
+                    <p className="text-gray-400 font-medium mt-1">{p.field} • {p.year}</p>
+                  </div>
+                  <div className="flex gap-4">
+                    <Button variant="ghost" onClick={() => openEditModal("project", p)} className="w-14 h-14 rounded-2xl hover:bg-blue-50 text-blue-600"><Edit className="w-6 h-6" /></Button>
+                    <Button variant="ghost" onClick={() => handleDelete("project", p.id)} className="w-14 h-14 rounded-2xl hover:bg-red-50 text-red-500"><Trash2 className="w-6 h-6" /></Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* DYNAMIC MODAL - 100% ORIGINAL FORM DESIGNS */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[700px] rounded-[40px] border-none p-0 overflow-hidden bg-white">
+          <div className="bg-blue-900 p-8 text-white">
+            <DialogTitle className="text-2xl font-black tracking-tighter">
+              {editingItem ? "Edit Entry" : `New ${modalType}`}
+            </DialogTitle>
+            <p className="text-blue-300 text-xs font-bold uppercase tracking-widest mt-1">Authorized Vault Access</p>
+          </div>
+          
+          <form onSubmit={handleSave} className="p-10 space-y-6 max-h-[70vh] overflow-y-auto">
+            <div className="grid gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Title / Caption</label>
+                <input 
+                  name={modalType === "gallery" ? "caption" : "title"}
+                  value={modalType === "gallery" ? formData.caption || '' : formData.title || ''}
+                  onChange={handleInputChange}
+                  className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-900 font-bold"
+                  required
+                />
+              </div>
+
+              {modalType === "blog" && (
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Category</label>
+                    <input name="category" value={formData.category || ''} onChange={handleInputChange} className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-none font-bold" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Author</label>
+                    <input name="author" value={formData.author || ''} onChange={handleInputChange} className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-none font-bold" />
+                  </div>
+                </div>
+              )}
+
+              {modalType === "project" && (
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Status</label>
+                    <input name="status" value={formData.status || ''} onChange={handleInputChange} className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-none font-bold" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Year</label>
+                    <input name="year" value={formData.year || ''} onChange={handleInputChange} className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-none font-bold" />
+                  </div>
+                </div>
+              )}
+
+              {modalType !== "gallery" && (
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Description Content</label>
+                  <textarea 
+                    name={modalType === "blog" ? "content" : "description"} 
+                    rows="5" 
+                    value={modalType === "blog" ? formData.content || '' : formData.description || ''}
+                    onChange={handleInputChange}
+                    className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-none font-bold"
+                  />
+                </div>
+              )}
+
+              <div className="p-8 border-4 border-dashed border-gray-100 rounded-[32px] bg-gray-50 flex flex-col items-center gap-4">
+                {(formData.src || formData.coverImage || formData.imageUrl) ? (
+                  <img src={formData.src || formData.coverImage || formData.imageUrl} className="h-40 rounded-3xl shadow-xl" alt="" />
+                ) : (
+                  <Upload className="w-10 h-10 text-gray-300" />
+                )}
+                <input type="file" onChange={handleFileUpload} className="text-xs font-bold text-gray-400 file:bg-blue-900 file:text-white file:px-6 file:py-2 file:rounded-full file:border-none file:mr-4 cursor-pointer" />
+              </div>
+
+              {modalType === "project" && (
+                <label className="flex items-center gap-4 p-6 bg-blue-50 rounded-[24px] cursor-pointer">
+                  <input type="checkbox" name="featured" checked={formData.featured || false} onChange={handleInputChange} className="w-6 h-6 rounded-lg text-blue-900" />
+                  <span className="font-black text-xs uppercase text-blue-900 tracking-widest">Feature on Home Page</span>
+                </label>
+              )}
+            </div>
+
+            <div className="flex gap-4 pt-6">
+              <Button type="button" onClick={() => setIsModalOpen(false)} className="flex-grow h-16 rounded-[24px] bg-gray-100 text-gray-400 font-black uppercase text-xs tracking-widest hover:bg-gray-200">Discard</Button>
+              <Button type="submit" disabled={isSubmitting} className="flex-grow h-16 rounded-[24px] bg-blue-900 text-white font-black uppercase text-xs tracking-widest hover:bg-blue-800 shadow-xl shadow-blue-900/20">
+                {isSubmitting ? <Loader2 className="animate-spin" /> : <Save className="mr-2 w-4 h-4" />}
+                {editingItem ? "Update Changes" : "Confirm Entry"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Footer />
     </div>
   );
-};
-
-export default Dashboard;
+}

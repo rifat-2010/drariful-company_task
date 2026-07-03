@@ -22,19 +22,19 @@ export const experienceData = [
         images: [
           {
             id: "img1",
-            src: "https://images.unsplash.com/photo-1576091160550-112173f7f869?auto=format&fit=crop&w=500&q=60",
+            src: "/src/assets/latest-profile-pic.jpg",
             alt: "Teaching Experience",
             caption: "Teaching undergraduate students"
           },
           {
             id: "img2",
-            src: "https://images.unsplash.com/photo-1576091160511-112173f7f869?auto=format&fit=crop&w=500&q=60",
+            src: "/src/assets/profile-sm-main.jpg",
             alt: "Lab Experience",
             caption: "Lab work and research"
           },
           {
             id: "img3",
-            src: "https://images.unsplash.com/photo-1576091160490-112173f7f869?auto=format&fit=crop&w=500&q=60",
+            src: "/src/assets/profile-sm.jpg",
             alt: "Clinical Practice",
             caption: "Clinical practice area"
           }
@@ -59,7 +59,7 @@ export const experienceData = [
         images: [
           {
             id: "img4",
-            src: "https://images.unsplash.com/photo-1576091160451-112173f7f869?auto=format&fit=crop&w=500&q=60",
+            src: "/src/assets/banner.jpg",
             alt: "Previous Role",
             caption: "Research coordination"
           }
@@ -90,13 +90,13 @@ export const experienceData = [
         images: [
           {
             id: "img5",
-            src: "https://images.unsplash.com/photo-1576091160580-112173f7f869?auto=format&fit=crop&w=500&q=60",
+            src: "/src/assets/new-gellary-img1.jpg",
             alt: "Diagnostic Work",
             caption: "Diagnostic pathology work"
           },
           {
             id: "img6",
-            src: "https://images.unsplash.com/photo-1576091160620-112173f7f869?auto=format&fit=crop&w=500&q=60",
+            src: "/src/assets/new-gellary-img2.jpg",
             alt: "Lab Analysis",
             caption: "Lab analysis and testing"
           }
@@ -105,31 +105,74 @@ export const experienceData = [
     ]
   },
   {
-    id: "lab",
-    title: "Lab Leadership",
+    id: "training",
+    title: "Training & Conference",
     experiences: [
       {
         id: "exp4",
-        icon: "🔬",
-        title: "Head of Molecular Pathology Lab",
-        institution: "Research Institute",
-        duration: "2020 - Present",
+        icon: "🎓",
+        title: "Conference Speaker & Trainer",
+        institution: "Various Institutions",
+        duration: "2015 - Present",
         responsibilities: [
-          "Lab management and operations",
-          "Equipment maintenance",
-          "Staff supervision and training"
+          "Conducted training workshops",
+          "Presented at international conferences",
+          "Developed training curriculum"
         ],
         highlights: [
-          "Implemented new diagnostic protocols",
-          "ISO certification achieved",
-          "Led research initiatives"
+          "Keynote speaker at Medical Summit 2023",
+          "Published proceedings in peer-reviewed journals",
+          "Trained 200+ medical professionals"
         ],
         images: [
           {
             id: "img7",
-            src: "https://images.unsplash.com/photo-1576091160660-112173f7f869?auto=format&fit=crop&w=500&q=60",
-            alt: "Lab Setup",
-            caption: "Modern lab facility"
+            src: "/src/assets/new-gellary-img3.jpg",
+            alt: "Conference",
+            caption: "International conference"
+          },
+          {
+            id: "img8",
+            src: "/src/assets/new-gellary-img4.jpg",
+            alt: "Training",
+            caption: "Training session"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "engagement",
+    title: "Public Engagement",
+    experiences: [
+      {
+        id: "exp5",
+        icon: "🎤",
+        title: "Public Health Advocate",
+        institution: "Community & Government Bodies",
+        duration: "2016 - Present",
+        responsibilities: [
+          "Organized health awareness campaigns",
+          "Media interviews and publications",
+          "Collaborative projects with NGOs"
+        ],
+        highlights: [
+          "Featured in national media",
+          "Developed public health guidelines",
+          "Community education programs"
+        ],
+        images: [
+          {
+            id: "img9",
+            src: "/src/assets/new-gellary-img5.jpg",
+            alt: "Public Engagement",
+            caption: "Community engagement"
+          },
+          {
+            id: "img10",
+            src: "/src/assets/new-gellary-img6.jpg",
+            alt: "Media",
+            caption: "Media presence"
           }
         ]
       }

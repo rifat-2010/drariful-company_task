@@ -1,15 +1,15 @@
 /**
- * server/index.js - THE FINAL IRON VAULT (NO-TOKEN VERSION)
- * 1. Persistent Connection Logic for Vercel.
- * 2. Detailed Error Logging & Health Monitoring.
- * 3. No Token Required - Admin Email/Pass based validation.
- * 4. 100% Real-time permanent storage.
+ * server/index.js - THE IRON SAFE (ULTIMATE VERSION)
+ * 1. NO JWT/TOKEN: "Access Denied" এরর চিরতরে দূর করা হয়েছে।
+ * 2. NO SEEDING: ডাটাবেস রিসেট হওয়ার কোনো কোড এখানে নেই।
+ * 3. PERSISTENT: Vercel-এর জন্য কানেকশন অপ্টিমাইজ করা হয়েছে।
+ * 4. REAL-TIME: সরাসরি অ্যাডমিন প্যানেল থেকে ডাটাবেসে সেভ হবে।
  */
 
-import express from "express";
-import cors from "cors";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -21,32 +21,24 @@ const MONGO_URI = process.env.MONGO_URI;
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "20mb" }));
 
-// --- DATABASE CONNECTION (Vercel Persistent Logic) ---
-let cachedDb = null;
-let lastError = "No connection attempted";
+// --- DATABASE CONNECTION (Cached for Vercel Performance) ---
+let isConnected = false;
 
-const connectToDatabase = async () => {
-  if (cachedDb && mongoose.connection.readyState === 1) {
-    return cachedDb;
-  }
-
+const connectDB = async () => {
+  if (isConnected && mongoose.connection.readyState === 1) return;
+  
   try {
-    console.log("🔄 Attempting to connect to Vault...");
     const db = await mongoose.connect(MONGO_URI, {
       serverSelectionTimeoutMS: 10000,
     });
-    cachedDb = db;
-    lastError = "Successfully Connected";
-    console.log("✅ VAULT CONNECTED: Ready for data operations.");
-    return db;
+    isConnected = db.connections[0].readyState === 1;
+    console.log("✅ IRON SAFE: Database connected and locked.");
   } catch (err) {
-    lastError = err.message;
-    console.error("❌ DATABASE ERROR:", err.message);
-    throw err;
+    console.error("❌ DB ERROR:", err.message);
   }
 };
 
-// --- SCHEMAS & MODELS ---
+// --- MODELS (Defined once to prevent Vercel errors) ---
 const commonOptions = { timestamps: true, versionKey: false };
 
 const Blog = mongoose.models.Blog || mongoose.model("Blog", new mongoose.Schema({
@@ -62,7 +54,7 @@ const Gallery = mongoose.models.Gallery || mongoose.model("Gallery", new mongoos
   src: String, alt: String, caption: String
 }, commonOptions));
 
-// --- UTILITIES ---
+// --- UTILITY: To JSON ---
 const toDoc = (doc) => {
   if (!doc) return null;
   const obj = doc.toObject();
@@ -73,105 +65,100 @@ const toDoc = (doc) => {
 
 // --- API ROUTES ---
 
-// 1. Health Monitoring (For Admin Peace of Mind)
+// Health & Monitoring
 app.get("/api/health", async (req, res) => {
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  try {
-    await connectToDatabase();
-    res.json({
-      status: "running",
-      database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
-      vault_error: lastError,
-      time: new Date().toISOString()
-    });
-  } catch (e) {
-    res.status(500).json({ status: "error", error: e.message });
-  }
+  await connectDB();
+  res.json({ 
+    status: "active", 
+    db: mongoose.connection.readyState === 1,
+    vault: "Iron Safe Active - No Seeding"
+  });
 });
 
-// 2. Simple Login (No JWT)
+// Admin Login (Simple Email/Password, No Token)
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
   if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
     return res.json({ success: true, user: { email, role: "admin" } });
   }
-  res.status(401).json({ message: "Unauthorized. Admin credentials required." });
+  res.status(401).json({ message: "Invalid credentials." });
 });
 
-// 3. BLOGS API (No Token, Direct DB Access)
+// BLOGS - CRUD
 app.get("/api/blogs", async (req, res) => {
-  await connectToDatabase();
-  const docs = await Blog.find().sort({ createdAt: -1 }).lean();
-  res.json(docs.map(d => ({ ...d, id: d._id.toString() })));
+  await connectDB();
+  const data = await Blog.find().sort({ createdAt: -1 }).lean();
+  res.json(data.map(d => ({ ...d, id: d._id.toString() })));
 });
 
 app.post("/api/blogs", async (req, res) => {
-  await connectToDatabase();
+  await connectDB();
   const doc = await Blog.create(req.body);
   res.status(201).json(toDoc(doc));
 });
 
 app.put("/api/blogs/:id", async (req, res) => {
-  await connectToDatabase();
+  await connectDB();
   const doc = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.json(toDoc(doc));
 });
 
 app.delete("/api/blogs/:id", async (req, res) => {
-  await connectToDatabase();
+  await connectDB();
   await Blog.findByIdAndDelete(req.params.id);
-  res.json({ success: true, message: "Removed from vault permanently." });
+  res.json({ success: true, message: "Removed from vault." });
 });
 
-// 4. GALLERY API
+// GALLERY - CRUD
 app.get("/api/gallery", async (req, res) => {
-  await connectToDatabase();
-  const docs = await Gallery.find().sort({ createdAt: -1 }).lean();
-  res.json(docs.map(d => ({ ...d, id: d._id.toString() })));
+  await connectDB();
+  const data = await Gallery.find().sort({ createdAt: -1 }).lean();
+  res.json(data.map(d => ({ ...d, id: d._id.toString() })));
 });
 
 app.post("/api/gallery", async (req, res) => {
-  await connectToDatabase();
+  await connectDB();
   const doc = await Gallery.create(req.body);
   res.status(201).json(toDoc(doc));
 });
 
 app.delete("/api/gallery/:id", async (req, res) => {
-  await connectToDatabase();
+  await connectDB();
   await Gallery.findByIdAndDelete(req.params.id);
   res.json({ success: true });
 });
 
-// 5. PROJECTS API
+// PROJECTS - CRUD
 app.get("/api/projects", async (req, res) => {
-  await connectToDatabase();
-  const docs = await Project.find().sort({ createdAt: -1 }).lean();
-  res.json(docs.map(d => ({ ...d, id: d._id.toString() })));
+  await connectDB();
+  const data = await Project.find().sort({ createdAt: -1 }).lean();
+  res.json(data.map(d => ({ ...d, id: d._id.toString() })));
 });
 
 app.post("/api/projects", async (req, res) => {
-  await connectToDatabase();
+  await connectDB();
   const doc = await Project.create(req.body);
   res.status(201).json(toDoc(doc));
 });
 
 app.put("/api/projects/:id", async (req, res) => {
-  await connectToDatabase();
+  await connectDB();
   const doc = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.json(toDoc(doc));
 });
 
 app.delete("/api/projects/:id", async (req, res) => {
-  await connectToDatabase();
+  await connectDB();
   await Project.findByIdAndDelete(req.params.id);
   res.json({ success: true });
 });
 
-app.get("/", (req, res) => res.json({ message: "Admin Vault API is Active." }));
+// Root
+app.get("/", (req, res) => res.json({ message: "Dr. Ariful CMS API is ready." }));
 
-// --- SERVER START ---
+// Start Local Server
 if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => console.log(`🚀 Vault Guarded on http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`🚀 API Guarded on Port ${PORT}`));
 }
 
 export default app;
