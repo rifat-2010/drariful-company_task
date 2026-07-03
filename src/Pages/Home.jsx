@@ -1,41 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Nav from "../Header/Nav";
 import Banner from "../Header/Banner";
-import FeaturedProjects from "../components/FeaturedProjects";
-import Expertises from "../components/Expertises";
-import AcademyHighlight from "../components/AcademyHighlight";
+import Awards from "../components/Awards";
 import Footer from "../Footer/Footer";
-import { getBlogs, getProjects } from "../lib/cms";
+import Skills from "../components/Skills";
+import FeaturedProjects from "../components/FeaturedProjects";
+import AcademyHighlight from "../components/AcademyHighlight";
+import CurrentPosition from "../components/CurrentPosition";
+import Expertises from "../components/Expertises";
+import Contributions from "../components/Contributions";
+import Books from "../components/Books";
+import Gallery from "../components/Gallery";
+import ExperienceSection from "./ExperienceSection";
 
-const Home = () => {
-  const [counts, setCounts] = useState({ blogs: 0, projects: 0 });
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    const loadStats = async () => {
-      try {
-        const blogs = await getBlogs();
-        const projects = await getProjects();
-        setCounts({ 
-          blogs: Array.isArray(blogs) ? blogs.length : 0, 
-          projects: Array.isArray(projects) ? projects.length : 0 
-        });
-      } catch (e) {
-        setCounts({ blogs: 0, projects: 0 });
-      }
-    };
-    loadStats();
-  }, []);
-
+export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="bg-[#f9fafb]">
       <Nav />
-      <Banner />
-      <Expertises />
+      <Banner /> 
+      <CurrentPosition/> 
+      {/* <AcademyHighlight />  */}
+      <div className=" bg-gray-50">
+        <ExperienceSection />
+      </div>
+      <Books></Books>
       <FeaturedProjects />
-      <AcademyHighlight />
+      <Expertises></Expertises>
+      <Contributions></Contributions>
+      <Skills></Skills>
+      <Awards />  
+      <Gallery></Gallery> 
       <Footer />
     </div>
   );
-};
-export default Home;
+}

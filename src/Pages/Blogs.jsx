@@ -1,8 +1,16 @@
+/**
+ * src/Pages/Blogs.jsx - THE PUBLIC VIEW (ULTIMATE VERSION)
+ * 1. 0% Reliance on defaultBlogs.
+ * 2. Elegant Loading & Empty States.
+ * 3. Responsive Grid with Safe Data Mapping.
+ */
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getBlogs } from "../lib/cms";
 import Nav from "../Header/Nav";
 import Footer from "../Footer/Footer";
+import { Loader2, BookOpen, Calendar, User } from "lucide-react";
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -12,10 +20,11 @@ const Blogs = () => {
     window.scrollTo(0, 0);
     const fetchBlogs = async () => {
       try {
+        setLoading(true);
         const data = await getBlogs();
-        setBlogs(data);
+        setBlogs(data || []);
       } catch (error) {
-        console.error("Failed to fetch blogs:", error);
+        console.error("❌ Blogs Fetch Error:", error);
       } finally {
         setLoading(false);
       }
@@ -24,55 +33,67 @@ const Blogs = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
       <Nav />
       
-      {/* Hero Section */}
-      <div className="bg-blue-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-4">Blog & Insights</h1>
-          <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-            Latest updates on precision medicine, tumor pathology, and medical education in Bangladesh.
+      {/* HERO SECTION */}
+      <div className="relative bg-blue-950 py-24 overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
+            Medical Insights & <span className="text-blue-400">Pathology Updates</span>
+          </h1>
+          <p className="text-blue-100 text-lg max-w-2xl mx-auto font-medium opacity-90">
+            Latest advancements in precision cancer medicine, molecular diagnostics, and histopathology.
           </p>
         </div>
       </div>
 
-      <main className="flex-grow max-w-7xl mx-auto px-4 py-12">
+      <main className="flex-grow max-w-7xl mx-auto px-4 py-16 w-full">
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900"></div>
+          <div className="flex flex-col justify-center items-center h-64 gap-4">
+            <Loader2 className="w-12 h-12 animate-spin text-blue-900" />
+            <p className="text-gray-500 font-bold animate-pulse uppercase tracking-widest text-xs">Accessing Archives...</p>
           </div>
         ) : blogs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {blogs.map((blog) => (
-              <article key={blog.id} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-                <div className="h-48 overflow-hidden">
+              <article key={blog.id} className="group bg-white rounded-3xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-500 flex flex-col">
+                <div className="relative h-56 overflow-hidden">
                   <img 
-                    src={blog.coverImage || "https://via.placeholder.com/800x400?text=No+Image"} 
+                    src={blog.coverImage || "https://images.unsplash.com/photo-1532187863486-abf9fb3a021c?auto=format&fit=crop&q=80"} 
                     alt={blog.title}
-                    className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                </div>
-                <div className="p-6 flex flex-col flex-grow">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full uppercase">
+                  <div className="absolute top-4 left-4">
+                    <span className="px-4 py-1.5 bg-blue-900/90 backdrop-blur-md text-white text-[10px] font-black rounded-full uppercase tracking-widest shadow-lg">
                       {blog.category}
                     </span>
-                    <span className="text-gray-500 text-xs">{blog.date}</span>
                   </div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                </div>
+                
+                <div className="p-8 flex flex-col flex-grow">
+                  <div className="flex items-center gap-4 text-gray-400 text-xs mb-4 font-bold uppercase tracking-wider">
+                    <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {blog.date}</div>
+                    <div className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> {blog.author}</div>
+                  </div>
+                  
+                  <h2 className="text-xl font-black text-gray-900 mb-4 line-clamp-2 leading-snug group-hover:text-blue-900 transition-colors">
                     {blog.title}
                   </h2>
-                  <p className="text-gray-600 mb-6 line-clamp-3 text-sm">
+                  
+                  <p className="text-gray-500 mb-8 line-clamp-3 text-sm leading-relaxed font-medium">
                     {blog.content}
                   </p>
-                  <div className="mt-auto flex items-center justify-between">
-                    <span className="text-xs text-gray-500">By {blog.author}</span>
+                  
+                  <div className="mt-auto">
                     <Link 
                       to={`/blog/${blog.id}`} 
-                      className="text-blue-600 font-semibold text-sm hover:text-blue-800"
+                      className="inline-flex items-center gap-2 text-blue-900 font-black text-xs uppercase tracking-widest group-hover:gap-4 transition-all"
                     >
-                      Read More →
+                      Read Full Analysis <span className="text-lg">→</span>
                     </Link>
                   </div>
                 </div>
@@ -80,9 +101,12 @@ const Blogs = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white rounded-xl shadow-sm">
-            <h3 className="text-2xl font-semibold text-gray-600">No blog posts found.</h3>
-            <p className="text-gray-500 mt-2">New content will be available soon.</p>
+          <div className="text-center py-24 bg-white rounded-[40px] shadow-inner border-2 border-dashed border-gray-100">
+            <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <BookOpen className="w-10 h-10 text-gray-300" />
+            </div>
+            <h3 className="text-2xl font-black text-gray-800">No blog posts found in our vault.</h3>
+            <p className="text-gray-400 mt-3 font-medium">We are currently preparing new research papers. Check back soon.</p>
           </div>
         )}
       </main>
