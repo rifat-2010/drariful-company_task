@@ -2,11 +2,11 @@
   "name": "drariful-cms-server",
   "version": "1.0.0",
   "description": "MongoDB backend server for Dr. Arifur Rahman's portfolio CMS",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js",
-    "seed": "node seed.js"
+    "dev": "node --watch index.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
