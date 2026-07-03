@@ -13,22 +13,28 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ডাটা লোড করা (LocalStorage ছাড়াই সরাসরি API থেকে)
-  useEffect(() => {
-    const loadAllData = async () => {
-      try {
-        const [b, g, p] = await Promise.all([getBlogs(), getGallery(), getProjects()]);
-        setBlogs(b);
-        setGallery(g);
-        setProjects(p);
-      } catch (error) {
-        console.error("Dashboard data load error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadAllData();
-  }, []);
+// Dashboard.jsx এর ভেতর ডাটা লোড করার সঠিক নিয়ম
+useEffect(() => {
+  const loadInitialData = async () => {
+    setLoading(true);
+    try {
+      const [dbBlogs, dbGallery, dbProjects] = await Promise.all([
+        getBlogs(),
+        getGallery(),
+        getProjects()
+      ]);
+      // এখানে আপনার অরিজিনাল স্টেট নাম ব্যবহার করুন (blogs, galleryItems, projects)
+      setBlogs(dbBlogs || []);
+      setGalleryItems(dbGallery || []);
+      setProjects(dbProjects || []);
+    } catch (err) {
+      console.error("Dashboard Load Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  loadInitialData();
+}, []);
 
   // --- BLOG HANDLERS ---
   const handleAddBlog = async (formData) => {
