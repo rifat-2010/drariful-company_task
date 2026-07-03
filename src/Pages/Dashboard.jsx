@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   getBlogs, addBlog, updateBlog, deleteBlog,
-  getGallery, addGalleryItem, deleteGalleryItem,
+  getGallery, addGalleryItem, updateGalleryItem, deleteGalleryItem,
   getProjects, addProject, updateProject, deleteProject,
   uploadImageFile, logout, getCurrentUser 
 } from "../lib/cms";
@@ -25,6 +25,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // ✅ Mobile menu state
   const navigate = useNavigate();
 
   // --- DATA STATES ---
@@ -129,12 +130,27 @@ export default function Dashboard() {
         setProjects(prev => editingItem ? prev.map(i => i.id === savedDoc.id ? savedDoc : i) : [savedDoc, ...prev]);
       } 
       else if (modalType === "gallery") {
-        savedDoc = await addGalleryItem(formData);
-        setGalleryItems(prev => [savedDoc, ...prev]);
+        // Gallery-specific validation
+        if (!editingItem && !formData.src) {
+          alert("⚠️ Please upload an image first!");
+          setIsSubmitting(false);
+          return;
+        }
+
+        console.log("💾 Gallery Save:", { editingItem, formData }); // Debug log
+        
+        savedDoc = editingItem 
+          ? await updateGalleryItem(editingItem.id, formData)
+          : await addGalleryItem(formData);
+        
+        console.log("✅ Gallery Saved:", savedDoc); // Debug log
+        
+        setGalleryItems(prev => editingItem ? prev.map(i => i.id === savedDoc.id ? savedDoc : i) : [savedDoc, ...prev]);
       }
 
       setIsModalOpen(false);
     } catch (err) {
+      console.error("❌ Save Error:", err); // Debug log
       alert("Error saving data: " + err.message);
     } finally {
       setIsSubmitting(false);
@@ -173,18 +189,82 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Nav />
-      <div className="flex flex-grow">
-        {/* SIDEBAR - ORIGINAL DESIGN */}
-        <aside className="w-72 bg-white border-r border-gray-100 hidden lg:flex flex-col sticky top-0 h-[calc(100vh-80px)]">
-          <div className="p-8">
-            <div className="bg-blue-900 rounded-3xl p-6 text-white shadow-xl shadow-blue-900/20">
-              <p className="text-xs font-black uppercase tracking-widest opacity-60 mb-1">Admin Session</p>
-              <h3 className="text-lg font-black truncate">{getCurrentUser()?.email}</h3>
+      {/* TOP NAVBAR with Mobile Menu Button */}
+      <div className="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div className="flex items-center justify-between px-4 py-4">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <Menu className="w-6 h-6 text-gray-700" />
+          </button>
+
+          {/* Logo/Title */}
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center">
+              <LayoutDashboard className="w-5 h-5 text-white" />
+            </div>
+            <div className="hidden sm:block">
+              <h2 className="text-lg font-black text-gray-900">Dashboard</h2>
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Admin Panel</p>
             </div>
           </div>
 
-          <nav className="flex-grow px-4 space-y-2">
+          {/* User Info - Desktop */}
+          <div className="hidden lg:flex items-center gap-3 text-sm">
+            <span className="text-gray-500 font-medium">{getCurrentUser()?.email}</span>
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <span className="text-blue-900 font-bold text-xs">
+                {getCurrentUser()?.email?.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-grow relative">
+        {/* MOBILE OVERLAY */}
+        {isMobileMenuOpen && (
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/50 z-40"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* SIDEBAR - RESPONSIVE VERSION */}
+        <aside className={`
+          w-72 bg-white border-r border-gray-100 flex flex-col
+          lg:sticky lg:top-0 lg:h-[calc(100vh-73px)]
+          transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen 
+            ? 'fixed inset-y-0 left-0 z-50 translate-x-0' 
+            : 'fixed inset-y-0 left-0 z-50 -translate-x-full lg:translate-x-0'
+          }
+        `}>
+          {/* Close button for mobile */}
+          <div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-100">
+            <h3 className="text-lg font-black text-gray-900">Menu</h3>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+
+          {/* Admin Session Info */}
+          <div className="p-6">
+            <button 
+              onClick={() => navigate("/")} 
+              className="w-full bg-blue-900 rounded-2xl p-5 text-white shadow-lg hover:bg-blue-800 transition-colors text-left"
+            >
+              <p className="text-xs font-black uppercase truncate">🔙 Back Home</p>
+            </button>
+          </div>
+
+          {/* Navigation Menu */}
+          <nav className="flex-grow px-4 space-y-2 overflow-y-auto">
             {[
               { id: "overview", label: "Overview", icon: LayoutDashboard },
               { id: "blogs", label: "Articles", icon: FileText },
@@ -193,21 +273,30 @@ export default function Dashboard() {
             ].map(item => (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setIsMobileMenuOpen(false); // Close menu on mobile after selection
+                }}
+                className={`w-full flex items-center gap-4 px-5 py-4 rounded-xl font-bold transition-all ${
                   activeTab === item.id 
-                  ? "bg-blue-50 text-blue-900" 
-                  : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"
+                  ? "bg-blue-900 text-white shadow-lg" 
+                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
-                <item.icon className="w-5 h-5" /> {item.label}
+                <item.icon className="w-5 h-5" /> 
+                <span>{item.label}</span>
               </button>
             ))}
           </nav>
 
-          <div className="p-8 mt-auto border-t border-gray-50">
-            <button onClick={logout} className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-red-500 hover:bg-red-50 transition-colors">
-              <LogOut className="w-5 h-5" /> Log Out
+          {/* Logout Button */}
+          <div className="p-4 border-t border-gray-100">
+            <button 
+              onClick={logout} 
+              className="w-full flex items-center gap-3 px-5 py-4 rounded-xl font-bold text-sm text-red-600 hover:bg-red-50 transition-colors"
+            >
+              <LogOut className="w-5 h-5" /> 
+              <span>Log Out</span>
             </button>
           </div>
         </aside>
@@ -278,16 +367,42 @@ export default function Dashboard() {
           {activeTab === "blogs" && (
             <div className="grid gap-6">
               {blogs.map(blog => (
-                <div key={blog.id} className="bg-white p-6 rounded-[32px] border border-gray-50 flex items-center gap-8 shadow-sm hover:shadow-md transition-all">
-                  <img src={blog.coverImage || "https://via.placeholder.com/150"} className="w-32 h-32 rounded-3xl object-cover" alt="" />
-                  <div className="flex-grow">
-                    <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest">{blog.category}</span>
-                    <h3 className="text-xl font-black text-gray-900 mt-1 line-clamp-1">{blog.title}</h3>
-                    <p className="text-gray-400 text-sm font-medium mt-2">{blog.date} • {blog.author}</p>
+                <div key={blog.id} className="bg-white p-4 sm:p-6 rounded-[32px] border border-gray-50 shadow-sm hover:shadow-md transition-all">
+                  {/* Mobile Layout: Stack vertically */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
+                    {/* Image */}
+                    <img 
+                      src={blog.coverImage || "https://via.placeholder.com/150"} 
+                      className="w-full sm:w-32 h-48 sm:h-32 rounded-2xl object-cover" 
+                      alt="" 
+                    />
+                    
+                    {/* Content */}
+                    <div className="flex-grow">
+                      <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest">{blog.category}</span>
+                      <h3 className="text-lg sm:text-xl font-black text-gray-900 mt-1 line-clamp-2">{blog.title}</h3>
+                      <p className="text-gray-400 text-xs sm:text-sm font-medium mt-2">{blog.date} • {blog.author}</p>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button variant="ghost" onClick={() => openEditModal("blog", blog)} className="w-12 h-12 rounded-2xl hover:bg-blue-50 text-blue-600"><Edit className="w-5 h-5" /></Button>
-                    <Button variant="ghost" onClick={() => handleDelete("blog", blog.id)} className="w-12 h-12 rounded-2xl hover:bg-red-50 text-red-500"><Trash2 className="w-5 h-5" /></Button>
+                  
+                  {/* Action Buttons - Always visible at bottom on mobile */}
+                  <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => openEditModal("blog", blog)} 
+                      className="flex-1 sm:flex-none h-12 rounded-xl hover:bg-blue-50 text-blue-600 font-bold text-sm"
+                    >
+                      <Edit className="w-4 h-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Edit</span>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => handleDelete("blog", blog.id)} 
+                      className="flex-1 sm:flex-none h-12 rounded-xl hover:bg-red-50 text-red-500 font-bold text-sm"
+                    >
+                      <Trash2 className="w-4 h-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Delete</span>
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -299,10 +414,33 @@ export default function Dashboard() {
           {activeTab === "gallery" && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {galleryItems.map(item => (
-                <div key={item.id} className="group relative aspect-square rounded-[32px] overflow-hidden shadow-sm border-4 border-white">
-                  <img src={item.src} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="" />
-                  <div className="absolute inset-0 bg-blue-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                    <Button onClick={() => handleDelete("gallery", item.id)} className="bg-white/20 backdrop-blur-md text-white hover:bg-red-500 w-12 h-12 rounded-2xl"><Trash2 className="w-5 h-5" /></Button>
+                <div key={item.id} className="group bg-white rounded-[32px] overflow-hidden shadow-sm border border-gray-100">
+                  {/* Image */}
+                  <div className="relative aspect-square overflow-hidden">
+                    <img src={item.src} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt={item.alt || ""} />
+                  </div>
+                  
+                  {/* Caption (if exists) */}
+                  {item.caption && (
+                    <div className="px-4 py-2 bg-gray-50">
+                      <p className="text-xs text-gray-600 font-medium line-clamp-2">{item.caption}</p>
+                    </div>
+                  )}
+                  
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 p-3 border-t border-gray-100">
+                    <Button 
+                      onClick={() => openEditModal("gallery", item)} 
+                      className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl h-10 text-xs font-bold"
+                    >
+                      <Edit className="w-4 h-4 mr-1" /> Edit
+                    </Button>
+                    <Button 
+                      onClick={() => handleDelete("gallery", item.id)} 
+                      className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl h-10 text-xs font-bold"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" /> Delete
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -313,18 +451,35 @@ export default function Dashboard() {
           {activeTab === "projects" && (
             <div className="grid gap-6">
               {projects.map(p => (
-                <div key={p.id} className="bg-white p-8 rounded-[32px] border border-gray-50 flex justify-between items-center shadow-sm">
-                  <div className="flex-grow">
-                    <div className="flex items-center gap-4 mb-2">
-                      <span className="px-4 py-1 bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full">{p.status}</span>
+                <div key={p.id} className="bg-white p-4 sm:p-8 rounded-[32px] border border-gray-50 shadow-sm">
+                  {/* Content */}
+                  <div className="flex-grow mb-4 sm:mb-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      <span className="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full">{p.status}</span>
                       {p.featured && <span className="bg-amber-50 text-amber-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">★ Featured</span>}
                     </div>
-                    <h3 className="text-2xl font-black text-gray-900">{p.title}</h3>
-                    <p className="text-gray-400 font-medium mt-1">{p.field} • {p.year}</p>
+                    <h3 className="text-lg sm:text-2xl font-black text-gray-900 line-clamp-2">{p.title}</h3>
+                    <p className="text-gray-400 text-sm font-medium mt-2">{p.field} • {p.year}</p>
                   </div>
-                  <div className="flex gap-4">
-                    <Button variant="ghost" onClick={() => openEditModal("project", p)} className="w-14 h-14 rounded-2xl hover:bg-blue-50 text-blue-600"><Edit className="w-6 h-6" /></Button>
-                    <Button variant="ghost" onClick={() => handleDelete("project", p.id)} className="w-14 h-14 rounded-2xl hover:bg-red-50 text-red-500"><Trash2 className="w-6 h-6" /></Button>
+                  
+                  {/* Action Buttons - Bottom on mobile, right on desktop */}
+                  <div className="flex gap-2 pt-4 border-t border-gray-100 sm:border-t-0 sm:pt-0">
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => openEditModal("project", p)} 
+                      className="flex-1 sm:flex-none h-12 sm:w-14 sm:h-14 rounded-xl hover:bg-blue-50 text-blue-600 font-bold"
+                    >
+                      <Edit className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <span className="ml-2 sm:hidden">Edit</span>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => handleDelete("project", p.id)} 
+                      className="flex-1 sm:flex-none h-12 sm:w-14 sm:h-14 rounded-xl hover:bg-red-50 text-red-500 font-bold"
+                    >
+                      <Trash2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <span className="ml-2 sm:hidden">Delete</span>
+                    </Button>
                   </div>
                 </div>
               ))}

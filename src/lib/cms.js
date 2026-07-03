@@ -97,6 +97,7 @@ export const deleteBlog = (id) => apiRequest(`/blogs/${id}`, { method: "DELETE" 
 
 export const getGallery = async () => (await apiRequest("/gallery")) || [];
 export const addGalleryItem = (data) => apiRequest("/gallery", { method: "POST", body: JSON.stringify(data) });
+export const updateGalleryItem = (id, data) => apiRequest(`/gallery/${id}`, { method: "PUT", body: JSON.stringify(data) });
 export const deleteGalleryItem = (id) => apiRequest(`/gallery/${id}`, { method: "DELETE" });
 
 export const getProjects = async () => (await apiRequest("/projects")) || [];

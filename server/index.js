@@ -122,6 +122,12 @@ app.post("/api/gallery", async (req, res) => {
   res.status(201).json(toDoc(doc));
 });
 
+app.put("/api/gallery/:id", async (req, res) => {
+  await connectDB();
+  const doc = await Gallery.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  res.json(toDoc(doc));
+});
+
 app.delete("/api/gallery/:id", async (req, res) => {
   await connectDB();
   await Gallery.findByIdAndDelete(req.params.id);
