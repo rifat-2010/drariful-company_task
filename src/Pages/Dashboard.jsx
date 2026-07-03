@@ -42,6 +42,9 @@ export default function Dashboard() {
   const [modalType, setModalType] = useState("blog");
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({});
+  
+  // --- DELETE CONFIRMATION STATE ---
+  const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, type: null, id: null });
 
   // Auth Check
   useEffect(() => {
@@ -158,7 +161,12 @@ export default function Dashboard() {
   };
 
   const handleDelete = async (type, id) => {
-    if (!window.confirm("Permanently remove this from the database vault?")) return;
+    // Open confirmation dialog instead of window.confirm
+    setDeleteConfirm({ isOpen: true, type, id });
+  };
+
+  const confirmDelete = async () => {
+    const { type, id } = deleteConfirm;
     try {
       setIsSubmitting(true);
       if (type === "blog") {
@@ -171,11 +179,16 @@ export default function Dashboard() {
         await deleteGalleryItem(id);
         setGalleryItems(prev => prev.filter(i => i.id !== id));
       }
+      setDeleteConfirm({ isOpen: false, type: null, id: null });
     } catch (err) {
       alert("Delete failed: " + err.message);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirm({ isOpen: false, type: null, id: null });
   };
 
   if (loading) return (
@@ -575,6 +588,69 @@ export default function Dashboard() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* DELETE CONFIRMATION DIALOG */}
+      <Dialog open={deleteConfirm.isOpen} onOpenChange={(open) => !open && cancelDelete()}>
+        <DialogContent className="sm:max-w-[440px] rounded-[32px] border-none p-0 overflow-hidden bg-white shadow-2xl">
+          {/* Header */}
+          <div className="bg-gradient-to-br from-red-500 to-red-600 p-8 text-white">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                <AlertCircle className="w-7 h-7" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-black tracking-tight">Confirm Delete</DialogTitle>
+                <p className="text-red-100 text-xs font-bold uppercase tracking-widest mt-1">Permanent Action</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Content */}
+          <div className="p-8 space-y-6">
+            <div className="bg-red-50 border-2 border-red-100 rounded-2xl p-6">
+              <p className="text-gray-700 font-bold text-sm leading-relaxed">
+                Are you sure you want to permanently remove this{" "}
+                <span className="text-red-600 font-black">
+                  {deleteConfirm.type === "blog" ? "Article" : 
+                   deleteConfirm.type === "project" ? "Research Project" : "Gallery Image"}
+                </span>{" "}
+                from the database vault?
+              </p>
+              <p className="text-gray-500 text-xs font-medium mt-3">
+                ⚠️ This action cannot be undone.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <Button 
+                type="button" 
+                onClick={cancelDelete}
+                disabled={isSubmitting}
+                className="flex-1 h-14 rounded-2xl bg-gray-100 text-gray-700 font-black uppercase text-xs tracking-widest hover:bg-gray-200 transition-colors"
+              >
+                <X className="w-4 h-4 mr-2" />
+                No, Cancel
+              </Button>
+              <Button 
+                type="button"
+                onClick={confirmDelete}
+                disabled={isSubmitting}
+                className="flex-1 h-14 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 text-white font-black uppercase text-xs tracking-widest hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/30 transition-all"
+              >
+                {isSubmitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Yes, Delete
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
