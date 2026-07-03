@@ -1,120 +1,72 @@
 import React, { useState, useEffect } from "react";
+import { getGallery } from "../lib/cms";
 import Nav from "../Header/Nav";
 import Footer from "../Footer/Footer";
-import { getGallery } from "../lib/cms";
 
-export default function GalleryPage() {
-  const [images, setImages] = useState([]);
+const GalleryPage = () => {
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    const fetchGallery = async () => {
+    window.scrollTo(0, 0);
+    const fetchItems = async () => {
       try {
         const data = await getGallery();
-        setImages(Array.isArray(data) ? data : []);
+        setItems(data);
       } catch (error) {
-        console.error("Failed to load gallery images:", error);
-        setError(error);
+        console.error("Gallery fetch error:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchGallery();
+    fetchItems();
   }, []);
 
   return (
-    <div>
-      <Nav></Nav>
-
-      <div className="bg-[#f9fafb]">
-        <div className="w-11/12 mx-auto py-10">
-          <h2 className="heading text-3xl font-bold text-center mb-2">
-            Clinical Gallery
-          </h2>
-          <p className="font-bold sub-title text-center mb-6">
-            Gallery of Clinical Work & Medical Insights
+    <div className="min-h-screen flex flex-col bg-white">
+      <Nav />
+      
+      <div className="bg-gray-900 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h1 className="text-4xl font-bold mb-4">Photo Gallery</h1>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Visual highlights of our biomolecular lab, seminars, and clinical experiences.
           </p>
-
-          {loading ? (
-            <div className="text-center py-16">
-              <span className="loading loading-spinner loading-lg text-[#003878]"></span>
-              <p className="mt-2 text-gray-500 font-semibold text-sm">
-                Loading gallery photos...
-              </p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-16 bg-white rounded-xl shadow-md border border-red-200">
-              <p className="text-red-600 text-lg font-semibold mb-3">
-                Unable to load gallery images
-              </p>
-              <p className="text-gray-600 mb-4">
-                {error.message || "The backend API is unavailable."}
-              </p>
-              <p className="text-sm text-gray-500">
-                Please verify the CMS backend deployment and its public API
-                access.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {images.map((img) => (
-                <div
-                  key={img.id}
-                  className="cursor-pointer"
-                  onClick={() => setSelectedImage(img)}
-                >
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    className="w-full h-48 object-cover rounded-md shadow-md hover:scale-105 transition-transform"
-                  />
-                  <p className="mt-2 text-center font-semibold heading">
-                    {img.alt}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {!loading && !error && images.length === 0 && (
-            <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-xl font-bold text-[#003878] mb-2">
-                No gallery images found
-              </h3>
-              <p className="text-gray-500">
-                The API returned no gallery items, so this page is showing an
-                empty state.
-              </p>
-            </div>
-          )}
-
-          {/* Modal */}
-          {selectedImage && (
-            <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center">
-              <div className="relative bg-[#f9fafb] rounded-md max-w-3xl w-full mx-4 p-4">
-                <button
-                  onClick={() => setSelectedImage(null)}
-                  className="absolute top-2 right-2 sub-title hover:text-[#003878] text-2xl"
-                >
-                  &times;
-                </button>
-                <img
-                  src={selectedImage.src}
-                  alt={selectedImage.alt}
-                  className="w-full max-h-[70vh] object-contain rounded"
-                />
-                <p className="text-lg font-semibold sub-title text-center mt-4">
-                  {selectedImage.alt}
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      <Footer></Footer>
+      <main className="flex-grow max-w-7xl mx-auto px-4 py-12">
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-600"></div>
+          </div>
+        ) : items.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {items.map((item) => (
+              <div key={item.id} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm transition-all hover:shadow-md">
+                <img
+                  src={item.src}
+                  alt={item.alt || "Gallery Image"}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                {item.caption && (
+                  <div className="absolute inset-x-0 bottom-0 bg-black/60 p-4 opacity-0 transition-opacity group-hover:opacity-100">
+                    <p className="text-sm text-white line-clamp-2">{item.caption}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <p className="text-gray-500 text-lg">No gallery items available at the moment.</p>
+          </div>
+        )}
+      </main>
+
+      <Footer />
     </div>
   );
-}
+};
+
+export default GalleryPage;
