@@ -24,15 +24,16 @@ app.use(express.json({ limit: "20mb" }));
 // --- DATABASE CONNECTION (Cached for Vercel Performance) ---
 let isConnected = false;
 
+// এই ফাংশনটি Vercel-এর জন্য সবচেয়ে ফাস্ট কানেকশন নিশ্চিত করবে
 const connectDB = async () => {
-  if (isConnected && mongoose.connection.readyState === 1) return;
+  if (mongoose.connection.readyState >= 1) return;
   
   try {
-    const db = await mongoose.connect(MONGO_URI, {
-      serverSelectionTimeoutMS: 10000,
+    await mongoose.connect(MONGO_URI, {
+      serverSelectionTimeoutMS: 5000, // ৫ সেকেন্ডের বেশি ওয়েট করবে না
+      maxPoolSize: 10, // ১০টি কানেকশন একসাথে হ্যান্ডেল করতে পারবে
     });
-    isConnected = db.connections[0].readyState === 1;
-    console.log("✅ IRON SAFE: Database connected and locked.");
+    console.log("✅ VAULT CONNECTED");
   } catch (err) {
     console.error("❌ DB ERROR:", err.message);
   }
@@ -55,6 +56,7 @@ const Gallery = mongoose.models.Gallery || mongoose.model("Gallery", new mongoos
 }, commonOptions));
 
 // --- UTILITY: To JSON ---
+// --- UTILITY: To JSON ---
 const toDoc = (doc) => {
   if (!doc) return null;
   const obj = doc.toObject();
@@ -62,6 +64,22 @@ const toDoc = (doc) => {
   delete obj._id;
   return obj;
 };
+
+// --- API ROUTES ---
+
+// Health & Monitoring
+app.get("/api/health", async (req, res) => {
+  await connectDB();
+  
+  // রেসপন্স ক্যাশ হওয়া বন্ধ করতে এই লাইনটি 
+  res.setHeader('Cache-Control', 'no-store');
+  
+  res.json({ 
+    status: "active", 
+    db: mongoose.connection.readyState === 1,
+    vault: "Iron Safe Active - No Seeding"
+  });
+});
 
 // --- API ROUTES ---
 
@@ -86,6 +104,7 @@ app.post("/api/login", async (req, res) => {
 
 // BLOGS - CRUD
 app.get("/api/blogs", async (req, res) => {
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
   await connectDB();
   const data = await Blog.find().sort({ createdAt: -1 }).lean();
   res.json(data.map(d => ({ ...d, id: d._id.toString() })));
@@ -111,6 +130,7 @@ app.delete("/api/blogs/:id", async (req, res) => {
 
 // GALLERY - CRUD
 app.get("/api/gallery", async (req, res) => {
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
   await connectDB();
   const data = await Gallery.find().sort({ createdAt: -1 }).lean();
   res.json(data.map(d => ({ ...d, id: d._id.toString() })));
@@ -136,6 +156,7 @@ app.delete("/api/gallery/:id", async (req, res) => {
 
 // PROJECTS - CRUD
 app.get("/api/projects", async (req, res) => {
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
   await connectDB();
   const data = await Project.find().sort({ createdAt: -1 }).lean();
   res.json(data.map(d => ({ ...d, id: d._id.toString() })));
