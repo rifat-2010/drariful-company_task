@@ -1,3 +1,15 @@
+// Import all images
+import latestProfile from '../assets/latest-profile-pic.jpg';
+import profileSmMain from '../assets/profile-sm-main.jpg';
+import profileSm from '../assets/profile-sm.jpg';
+import banner from '../assets/banner.jpg';
+import gallery1 from '../assets/new-gellary-img1.jpg';
+import gallery2 from '../assets/new-gellary-img2.jpg';
+import gallery3 from '../assets/new-gellary-img3.jpg';
+import gallery4 from '../assets/new-gellary-img4.jpg';
+import gallery5 from '../assets/new-gellary-img5.jpg';
+import gallery6 from '../assets/new-gellary-img6.jpg';
+
 export const experienceData = [
   {
     id: "academic",
@@ -22,19 +34,19 @@ export const experienceData = [
         images: [
           {
             id: "img1",
-            src: "/src/assets/latest-profile-pic.jpg",
+            src: latestProfile,
             alt: "Teaching Experience",
             caption: "Teaching undergraduate students"
           },
           {
             id: "img2",
-            src: "/src/assets/profile-sm-main.jpg",
+            src: profileSmMain,
             alt: "Lab Experience",
             caption: "Lab work and research"
           },
           {
             id: "img3",
-            src: "/src/assets/profile-sm.jpg",
+            src: profileSm,
             alt: "Clinical Practice",
             caption: "Clinical practice area"
           }
@@ -59,7 +71,7 @@ export const experienceData = [
         images: [
           {
             id: "img4",
-            src: "/src/assets/banner.jpg",
+            src: banner,
             alt: "Previous Role",
             caption: "Research coordination"
           }
@@ -90,13 +102,13 @@ export const experienceData = [
         images: [
           {
             id: "img5",
-            src: "/src/assets/new-gellary-img1.jpg",
+            src: gallery1,
             alt: "Diagnostic Work",
             caption: "Diagnostic pathology work"
           },
           {
             id: "img6",
-            src: "/src/assets/new-gellary-img2.jpg",
+            src: gallery2,
             alt: "Lab Analysis",
             caption: "Lab analysis and testing"
           }
@@ -127,13 +139,13 @@ export const experienceData = [
         images: [
           {
             id: "img7",
-            src: "/src/assets/new-gellary-img3.jpg",
+            src: gallery3,
             alt: "Conference",
             caption: "International conference"
           },
           {
             id: "img8",
-            src: "/src/assets/new-gellary-img4.jpg",
+            src: gallery4,
             alt: "Training",
             caption: "Training session"
           }
@@ -164,13 +176,13 @@ export const experienceData = [
         images: [
           {
             id: "img9",
-            src: "/src/assets/new-gellary-img5.jpg",
+            src: gallery5,
             alt: "Public Engagement",
             caption: "Community engagement"
           },
           {
             id: "img10",
-            src: "/src/assets/new-gellary-img6.jpg",
+            src: gallery6,
             alt: "Media",
             caption: "Media presence"
           }
