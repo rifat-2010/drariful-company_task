@@ -280,7 +280,7 @@ export default function Dashboard() {
           <nav className="flex-grow px-4 space-y-2 overflow-y-auto">
             {[
               { id: "overview", label: "Overview", icon: LayoutDashboard },
-              { id: "blogs", label: "Articles", icon: FileText },
+              { id: "blogs", label: "Blogs", icon: FileText },
               { id: "projects", label: "Research", icon: FolderPlus },
               { id: "gallery", label: "Gallery", icon: ImageIcon }
             ].map(item => (
@@ -341,7 +341,7 @@ export default function Dashboard() {
                     <span className="text-emerald-500 font-black text-xs bg-emerald-50 px-3 py-1 rounded-full">+ Live</span>
                   </div>
                   <h3 className="text-4xl font-black text-gray-900 mt-6">{blogs.length}</h3>
-                  <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2">Active Articles</p>
+                  <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-2">Active Blogs</p>
                 </Card>
                 <Card className="rounded-[40px] border-none shadow-sm bg-white p-8">
                   <div className="flex justify-between items-start">
@@ -376,7 +376,7 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* ARTICLES (BLOGS) CONTENT */}
+          {/* Blogs (BLOGS) CONTENT */}
           {activeTab === "blogs" && (
             <div className="grid gap-6">
               {blogs.map(blog => (
@@ -419,7 +419,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
-              {blogs.length === 0 && <p className="text-center py-20 text-gray-400 italic">No articles found in vault.</p>}
+              {blogs.length === 0 && <p className="text-center py-20 text-gray-400 italic">No Blogs found in vault.</p>}
             </div>
           )}
 

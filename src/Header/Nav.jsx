@@ -95,17 +95,21 @@ export default function Nav() {
                         onClick={scrollToTop}>Blogs</Link></li>
                 </ul>
             </div>
-            <div className="navbar-end flex items-center gap-4">
+            <div className="navbar-end flex items-center gap-2 md:gap-4">
                 <Link 
                     to={'/login'} 
-                    className="text-white md:text-gray-700 hover:text-blue-200 md:hover:text-[#003878] text-sm font-bold transition-colors"
+                    className="px-1 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-white md:text-gray-700 hover:text-blue-200 md:hover:text-[#003878] transition-colors rounded-lg md:rounded-none"
                     onClick={scrollToTop}
                 >
                     Admin
                 </Link>
-                <a className="active-btn">
-                    <Link to={'/contact'} onClick={scrollToTop}>Contact</Link>
-                </a>
+                <Link 
+                    to={'/contact'} 
+                    className="active-btn px-4 py-1.5 md:px-6 md:py-2 text-xs md:text-sm font-bold text-white rounded-lg transition-colors"
+                    onClick={scrollToTop}
+                >
+                    Contact
+                </Link>
             </div>
         </div>
     )

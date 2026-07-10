@@ -171,7 +171,7 @@ dist
 
 ### Dashboard Sections
 1. **Overview:** Statistics (blogs count, projects count, gallery items)
-2. **Articles:** Manage blog posts (add, edit, delete with cover images)
+2. **Blogs:** Manage blog posts (add, edit, delete with cover images)
 3. **Research:** Manage research projects (featured projects, status tracking)
 4. **Gallery:** Image management with caption editing
 
